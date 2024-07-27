@@ -117,6 +117,42 @@ while running:
             randx3 = random.randint(0, 15)
         if (randy3 == randy or randy3 == randy1 or randy3 == randy2):
             randy3 = random.randint(0, 9)
+    # character 2 collide with stick 0
+    if (pos2.x > randx * 80 and pos2.x < randx * 80 + 80) and (pos2.y > randy * 80 and pos2.y < randy * 80 + 80):
+        pygame.draw.rect(screen, "black", (randx * 80, randy * 80, 80, 80), 5) # REPLACE WITH BG OF THAT SQUARE
+        randx = random.randint(0, 15)
+        randy = random.randint(0, 9)
+        if (randx == randx1 or randx == randx2 or randx == randx3):
+            randx = random.randint(0, 15)
+        if (randy == randy1 or randy == randy2 or randy == randy3):
+            randy = random.randint(0, 9)
+    # character 2 collide with stick 1
+    if (pos2.x > randx1 * 80 and pos2.x < randx1 * 80 + 80) and (pos2.y > randy1 * 80 and pos2.y < randy1 * 80 + 80):
+        pygame.draw.rect(screen, "black", (randx1 * 80, randy1 * 80, 80, 80), 5) # REPLACE WITH BG OF THAT SQUARE
+        randx1 = random.randint(0, 15)
+        randy1 = random.randint(0, 9)
+        if (randx1 == randx or randx1 == randx2 or randx1 == randx3):
+            randx1 = random.randint(0, 15)
+        if (randy1 == randy or randy1 == randy2 or randy1 == randy3):
+            randy1 = random.randint(0, 9)
+    # character 2 collide with stick 2
+    if (pos2.x > randx2 * 80 and pos2.x < randx2 * 80 + 80) and (pos2.y > randy2 * 80 and pos2.y < randy2 * 80 + 80):
+        pygame.draw.rect(screen, "black", (randx2 * 80, randy2 * 80, 80, 80), 5) # REPLACE WITH BG OF THAT SQUARE
+        randx2 = random.randint(0, 15)
+        randy2 = random.randint(0, 9)
+        if (randx2 == randx or randx2 == randx1 or randx2 == randx3):
+            randx2 = random.randint(0, 15)
+        if (randy2 == randy or randy2 == randy1 or randy2 == randy3):
+            randy2 = random.randint(0, 9)
+    # character 2 collide with stick 3
+    if (pos2.x > randx3 * 80 and pos2.x < randx3 * 80 + 80) and (pos2.y > randy3 * 80 and pos2.y < randy3 * 80 + 80):
+        pygame.draw.rect(screen, "black", (randx3 * 80, randy3 * 80, 80, 80), 5) # REPLACE WITH BG OF THAT SQUARE
+        randx3 = random.randint(0, 15)
+        randy3 = random.randint(0, 9)
+        if (randx3 == randx or randx3 == randx1 or randx3 == randx2):
+            randx3 = random.randint(0, 15)
+        if (randy3 == randy or randy3 == randy1 or randy3 == randy2):
+            randy3 = random.randint(0, 9)
     
     # characters
     pygame.draw.circle(screen, "red", pos, 40)
