@@ -1,5 +1,10 @@
+# imports
 import pygame
 import random
+
+# variables
+stick1 = 0 # amount of sticks player 1 has
+stick2 = 0 # amount of sticks player 2 has
 
 # initialize Pygame
 pygame.init()
@@ -25,6 +30,27 @@ randy2 = random.randint(0, 9)
 randx3 = random.randint(0, 15)
 randy3 = random.randint(0, 9)
 
+# character collision with sticks
+def collideStick(posx, posy, stick, amount):
+    global randx, randy, randx1, randy1, randx2, randy2, randx3, randy3
+
+    
+
+    if stick == 0 and (posx > randx * 80 and posx < randx * 80 + 80) and (posy > randy * 80 and posy < randy * 80 + 80):
+        randx, randy = random.randint(0, 15), random.randint(0, 9)
+        amount += 1 # + 1 to sticks that the player has
+    elif stick == 1 and (posx > randx1 * 80 and posx < randx1 * 80 + 80) and (posy > randy1 * 80 and posy < randy1 * 80 + 80):
+        randx1, randy1 = random.randint(0, 15), random.randint(0, 9)
+        amount += 1 # + 1 to sticks that the player has
+    elif stick == 2 and (posx > randx2 * 80 and posx < randx2 * 80 + 80) and (posy > randy2 * 80 and posy < randy2 * 80 + 80):
+        randx2, randy2 = random.randint(0, 15), random.randint(0, 9)
+        amount += 1 # + 1 to sticks that the player has
+    elif stick == 3 and (posx > randx3 * 80 and posx < randx3 * 80 + 80) and (posy > randy3 * 80 and posy < randy3 * 80 + 80):
+        randx3, randy3 = random.randint(0, 15), random.randint(0, 9)
+        amount += 1 # + 1 to sticks that the player has
+
+    return amount
+    
 #create character sprite
 class CharacterMale(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -43,19 +69,6 @@ class Goose(pygame.sprite.Sprite):
        self.rect.topleft = (x, y)
        self.mask = pygame.mask.from_surface(self.image)'''
 
-# character collision with sticks
-def collideStick(posx, posy, stick):
-    global randx, randy, randx1, randy1, randx2, randy2, randx3, randy3
-
-    if stick == 0 and (posx > randx * 80 and posx < randx * 80 + 80) and (posy > randy * 80 and posy < randy * 80 + 80):
-        randx, randy = random.randint(0, 15), random.randint(0, 9)
-    elif stick == 1 and (posx > randx1 * 80 and posx < randx1 * 80 + 80) and (posy > randy1 * 80 and posy < randy1 * 80 + 80):
-        randx1, randy1 = random.randint(0, 15), random.randint(0, 9)
-    elif stick == 2 and (posx > randx2 * 80 and posx < randx2 * 80 + 80) and (posy > randy2 * 80 and posy < randy2 * 80 + 80):
-        randx2, randy2 = random.randint(0, 15), random.randint(0, 9)
-    elif stick == 3 and (posx > randx3 * 80 and posx < randx3 * 80 + 80) and (posy > randy3 * 80 and posy < randy3 * 80 + 80):
-        randx3, randy3 = random.randint(0, 15), random.randint(0, 9)
-
 # main loop
 while running:
     for event in pygame.event.get():
@@ -63,7 +76,7 @@ while running:
             running = False
 
     # fill the screen with a color
-    screen.fill("green")
+    screen.fill("white")
 
     # draw background grid - DELETE AFTER
     for i in range(0, 1280, 80):
@@ -78,40 +91,41 @@ while running:
 
     # character movement
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
+    if keys[pygame.K_w] and pos.y - 300 * dt > 0:
         pos.y -= 300 * dt
-    if keys[pygame.K_s]:
+    if keys[pygame.K_s] and pos.y + 300 * dt < 780:
         pos.y += 300 * dt
-    if keys[pygame.K_a]:
+    if keys[pygame.K_a] and pos.x - 300 * dt > 0:
         pos.x -= 300 * dt
-    if keys[pygame.K_d]:
+    if keys[pygame.K_d] and pos.x + 300 * dt < 1280:
         pos.x += 300 * dt
 
-    if keys[pygame.K_UP]:
+    if keys[pygame.K_UP] and pos2.y - 300 * dt > 0:
         pos2.y -= 300 * dt
-    if keys[pygame.K_DOWN]:
+    if keys[pygame.K_DOWN] and pos2.y + 300 * dt < 780:
         pos2.y += 300 * dt
-    if keys[pygame.K_LEFT]:
+    if keys[pygame.K_LEFT] and pos2.x - 300 * dt > 0:
         pos2.x -= 300 * dt
-    if keys[pygame.K_RIGHT]:
+    if keys[pygame.K_RIGHT] and pos2.x + 300 * dt < 1280:
         pos2.x += 300 * dt
 
     # check character collisions with sticks
-    collideStick(pos.x, pos.y, 0)
-    collideStick(pos.x, pos.y, 1)
-    collideStick(pos.x, pos.y, 2)
-    collideStick(pos.x, pos.y, 3)
-    collideStick(pos2.x, pos2.y, 0)
-    collideStick(pos2.x, pos2.y, 1)
-    collideStick(pos2.x, pos2.y, 2)
-    collideStick(pos2.x, pos2.y, 3)
+    for i in range(4):
+        stick1 = collideStick(pos.x, pos.y, i, stick1)
+        stick2 = collideStick(pos2.x, pos2.y, i, stick2)
 
     # draw characters
     pygame.draw.circle(screen, "red", pos, 40)
     pygame.draw.circle(screen, "blue", pos2, 40)
 
+    # goose
+    pygame.draw.circle(screen, "red", pos, 40)
+    random.randint(0, 15)
+
     # update display
     pygame.display.flip()
+
+    print(stick1, stick2)
 
     # limit FPS
     dt = clock.tick(60) / 1000
