@@ -1,5 +1,6 @@
-# import
+# imports
 import pygame
+import random
 
 #colors
 
@@ -11,8 +12,21 @@ clock = pygame.time.Clock()
 running = True
 dt = 0
 
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
-player_pos2 = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+pos2 = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+
+# stick positions
+randx = random.randint(0, 15)
+randy = random.randint(0, 9)
+
+randx1 = random.randint(0, 15)
+randy1 = random.randint(0, 9)
+
+randx2 = random.randint(0, 15)
+randy2 = random.randint(0, 9)
+
+randx3 = random.randint(0, 15)
+randy3 = random.randint(0, 9)
 
 #create goose sprite
 class Goose(pygame.sprite.Sprite):
@@ -41,38 +55,52 @@ while running:
         for j in range(0, 780, 80):
             pygame.draw.rect(screen, "black", (i, j, 80, 80), 5)
 
-    # characters
-    pygame.draw.circle(screen, "red", player_pos, 40)
-    pygame.draw.circle(screen, "blue", player_pos2, 40)
+    # sticks
+    pygame.draw.line(screen, "black", (randx * 80,randy * 80), (randx * 80 + 80,randy * 80 + 80), 5)
+    pygame.draw.line(screen, "black", (randx1 * 80,randy1 * 80), (randx1 * 80 + 80,randy1 * 80 + 80), 5)
+    pygame.draw.line(screen, "black", (randx2 * 80,randy2 * 80), (randx2 * 80 + 80,randy2 * 80 + 80), 5)
+    pygame.draw.line(screen, "black", (randx3 * 80,randy3 * 80), (randx3 * 80 + 80,randy3 * 80 + 80), 5)
 
-    # stick
-    pygame.draw.line(screen,"black", (0,0), (0,80), 5)
-
+    # character 1 moving
     keys = pygame.key.get_pressed()
-
     if keys[pygame.K_w]:
-        player_pos.y -= 300 * dt
+        pos.y -= 300 * dt
     if keys[pygame.K_s]:
-        player_pos.y += 300 * dt
+        pos.y += 300 * dt
     if keys[pygame.K_a]:
-        player_pos.x -= 300 * dt
+        pos.x -= 300 * dt
     if keys[pygame.K_d]:
-        player_pos.x += 300 * dt
+        pos.x += 300 * dt
+    # character 2 moving
     if keys[pygame.K_UP]:
-        player_pos2.y -= 300 * dt
+        pos2.y -= 300 * dt
     if keys[pygame.K_DOWN]:
-        player_pos2.y += 300 * dt
+        pos2.y += 300 * dt
     if keys[pygame.K_LEFT]:
-        player_pos2.x -= 300 * dt
+        pos2.x -= 300 * dt
     if keys[pygame.K_RIGHT]:
-        player_pos2.x += 300 * dt
+        pos2.x += 300 * dt
+    
+    # character 1 collide with stick
+    if (pos.x > randx * 80 and pos.x < randx * 80 + 80) and (pos.y > randy * 80 and pos.y < randy * 80 + 80):
+        pygame.draw.rect(screen, "black", (randx * 80, randy * 80, 80, 80), 5)
+        randx = random.randint(0, 15)
+        randy = random.randint(0, 9)
+        if (randx == randx1 or randx == randx2 or randx == randx3):
+            randx = random.randint(0, 15)
+        if (randy == randy1 or randy == randy2 or randy == randy3):
+            randy = random.randint(0, 9)
+        print(randx, randy)
+    
+    # characters
+    pygame.draw.circle(screen, "red", pos, 40)
+    pygame.draw.circle(screen, "blue", pos2, 40)
 
-    # flip() the display to put your work on screen
+    # display on screen
     pygame.display.flip()
 
     # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-
-    # independent physics.
+    # dt is delta time in seconds since last frame, used for framerate independent physics.
     dt = clock.tick(60) / 1000
 
 pygame.quit()
