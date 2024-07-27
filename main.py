@@ -14,6 +14,15 @@ dt = 0
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 player_pos2 = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
+#create goose sprite
+class Goose(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        '''self.image = pygame.image.load() <-- when we get the image
+       self.rect = self.image.get_rect()
+       self.rect.topleft = (x, y)
+       self.mask = pygame.mask.from_surface(self.image)'''
+
 while running:
     # user didn't press quit
     for event in pygame.event.get():
