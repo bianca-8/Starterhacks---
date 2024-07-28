@@ -63,11 +63,18 @@ class CharacterMale(pygame.sprite.Sprite):
 #create goose sprite
 class Goose(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        '''self.image = pygame.image.load() <-- when we get the image
+       self.images_right = []
+       self.index = 0
+       self.counter = 0
+       for i in range(1, 4):
+           img_right = pygame.image.load(f'realSprite/Goose{i}.png')
+           img_right = pygame.transform.scale(img_right, (100, 60))
+           self.images_right.append(img_right)
+           
+       self.images
        self.rect = self.image.get_rect()
        self.rect.topleft = (x, y)
-       self.mask = pygame.mask.from_surface(self.image)'''
+       self.mask = pygame.mask.from_surface(self.image)
 
 # initialize time for goose movement
 gooseLastMoveTime = pygame.time.get_ticks()
