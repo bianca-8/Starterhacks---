@@ -30,6 +30,7 @@ randy2 = random.randint(0, 9)
 randx3 = random.randint(0, 15)
 randy3 = random.randint(0, 9)
 
+<<<<<<< Updated upstream
 # character collision with sticks
 def collideStick(posx, posy, stick, amount):
     global randx, randy, randx1, randy1, randx2, randy2, randx3, randy3
@@ -49,6 +50,23 @@ def collideStick(posx, posy, stick, amount):
 
     return amount
     
+=======
+#Splits Sprite Sheet
+
+class SpriteSheetMale:
+    sprite_sheet = None
+    def __init__(self, file_name):
+        self.sprite_sheet = pygame.image.load(file_name).convert_alpha()
+    def strip_from_sheet(sheet, start, size, columns, rows=1):
+        frames = []
+        for j in range(rows):
+            for i in range(columns):
+                location = (start[0]+size[0]*i, start[1]+size[1]*j)
+                frames.append(sheet.subsurface(pg.Rect(location,size)))
+        return frames
+
+
+>>>>>>> Stashed changes
 #create character sprite
 class CharacterMale(pygame.sprite.Sprite):
     def __init__(self, x, y):
