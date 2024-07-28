@@ -11,7 +11,7 @@ HEIGHT = 780
 stick1 = 0 # amount of sticks player 1 has
 stick2 = 0 # amount of sticks player 2 has
 fences = [] # list of fence positions
-charStep = 300  # character steps
+charStep = 400  # character steps
 
 # initialize Pygame
 pygame.init()
@@ -77,23 +77,11 @@ class CharacterMale(pygame.sprite.Sprite):
 #create goose sprite
 class Goose(pygame.sprite.Sprite):
     def __init__(self, x, y):
-       self.images_right = []
-       self.index = 0
-       self.counter = 0
-       for i in range(1, 4): #adds the images to a list with a loop for the animation
-           img_right = pygame.image.load(f'realSprite/Goose{i}.png')
-           img_right = pygame.transform.scale(img_right, (100, 60))
-           self.images_right.append(img_right)
-           
-       self.images = self.images_right[self.index]
-       self.rect = self.images.get_rect()
-       self.rect.x = x
-       self.rect.y = y
+        pygame.sprite.Sprite.__init__(self)
+        '''self.image = pygame.image.load() <-- when we get the image
+       self.rect = self.image.get_rect()
        self.rect.topleft = (x, y)
-       self.mask = pygame.mask.from_surface(self.images)
-
-    def update(self):
-        screen.blit(self.images, self.rect)
+       self.mask = pygame.mask.from_surface(self.image)'''
 
 # initialize time for goose movement
 gooseLastMoveTime = pygame.time.get_ticks()
@@ -123,20 +111,20 @@ while running:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w] and pos.y - charStep * dt > 0:
         pos.y -= charStep * dt
-    if keys[pygame.K_s] and pos.y + charStep * dt < HEIGHT:
+    elif keys[pygame.K_s] and pos.y + charStep * dt < HEIGHT:
         pos.y += charStep * dt
-    if keys[pygame.K_a] and pos.x - charStep * dt > 0:
+    elif keys[pygame.K_a] and pos.x - charStep * dt > 0:
         pos.x -= charStep * dt
-    if keys[pygame.K_d] and pos.x + charStep * dt < WIDTH:
+    elif keys[pygame.K_d] and pos.x + charStep * dt < WIDTH:
         pos.x += charStep * dt
 
     if keys[pygame.K_UP] and pos2.y - charStep * dt > 0:
         pos2.y -= charStep * dt
-    if keys[pygame.K_DOWN] and pos2.y + charStep * dt < HEIGHT:
+    elif keys[pygame.K_DOWN] and pos2.y + charStep * dt < HEIGHT:
         pos2.y += charStep * dt
-    if keys[pygame.K_LEFT] and pos2.x - charStep * dt > 0:
+    elif keys[pygame.K_LEFT] and pos2.x - charStep * dt > 0:
         pos2.x -= charStep * dt
-    if keys[pygame.K_RIGHT] and pos2.x + charStep * dt < WIDTH:
+    elif keys[pygame.K_RIGHT] and pos2.x + charStep * dt < WIDTH:
         pos2.x += charStep * dt
 
     # check character collisions with sticks
@@ -191,8 +179,6 @@ while running:
 
     # draw goose
     pygame.draw.circle(screen, "green", goosePos, 40)
-    goose = Goose(goosePos.x,goosePos.y)
-    goose.update()
 
     # update display
     pygame.display.flip()
