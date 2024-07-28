@@ -139,6 +139,9 @@ class Goose(pygame.sprite.Sprite):
 #pink man image
 class pinkMan(pygame.sprite.Sprite):
     def __init__(self, x, y):
+        super().__init__()
+        self.x = x
+        self.y = y
         self.pink_d = []
         self.pink_u = []
         self.pink_r = []
@@ -167,15 +170,34 @@ class pinkMan(pygame.sprite.Sprite):
         self.imagesUp = self.pink_u[self.index]
         self.rectUp = self.imagesUp.get_rect()
 
-        print("pinup",self.pink_u)
-
-
         self.rectUp.x = x
         self.rectUp.y = y
         self.rectUp.topleft = (x, y)
         self.mask = pygame.mask.from_surface(self.imagesUp)
 
+    def update_x(self, new_value):
+        self.x = new_value
+        self.rectUp.x = new_value
+
+    def update_y(self, new_value):
+        self.y = new_value
+        self.rectUp.y = new_value
+
     def update(self):
+        global keys
+        #-----
+
+        if keys[pygame.K_w] and pos.y - charStep * dt > 0:
+            pos.y -= charStep * dt
+        elif keys[pygame.K_s] and pos.y + charStep * dt < HEIGHT:
+            pos.y += charStep * dt
+        elif keys[pygame.K_a] and pos.x - charStep * dt > 0:
+            pos.x -= charStep * dt
+        elif keys[pygame.K_d] and pos.x + charStep * dt < WIDTH:
+            pos.x += charStep * dt
+
+        #-----
+        
         screen.blit(self.imagesUp, self.rectUp)
         animationUpdate = 20
         self.counter += 1 
@@ -264,9 +286,12 @@ while running:
         pygame.draw.line(screen, "black", (fence[0], fence[1]), (fence[2], fence[3]), 5)
 
     # draw goose
+
     goose.update()
 
     #PinkMan
+    pink.update_x(pos.x)
+    pink.update_y(pos.y)
     pink.update()
 
     # update display
