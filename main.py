@@ -77,7 +77,7 @@ class Goose(pygame.sprite.Sprite):
        self.images_right = []
        self.index = 0
        self.counter = 0
-       for i in range(1, 4):
+       for i in range(1, 4): #adds the images to a list with a loop for the animation
            img_right = pygame.image.load(f'realSprite/Goose{i}.png')
            img_right = pygame.transform.scale(img_right, (100, 60))
            self.images_right.append(img_right)
@@ -144,7 +144,6 @@ while running:
     # Draw characters
     pygame.draw.circle(screen, "red", pos, 40)
     pygame.draw.circle(screen, "blue", pos2, 40)
-    goose.update()
 
     # Draw fences
     if keys[pygame.K_f] and stick1 > 0:
@@ -175,6 +174,7 @@ while running:
 
     # Draw goose
     pygame.draw.circle(screen, "green", goosePos, 40)
+    goose.update() #new and updated goose
 
     # Update display
     pygame.display.flip()
