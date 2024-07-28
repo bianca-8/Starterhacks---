@@ -183,21 +183,10 @@ class pinkMan(pygame.sprite.Sprite):
         self.y = new_value
         self.rectUp.y = new_value
 
-    def update(self):
+    def update(self, direction):
         global keys
-        #-----
-
-        if keys[pygame.K_w] and pos.y - charStep * dt > 0:
-            pos.y -= charStep * dt
-        elif keys[pygame.K_s] and pos.y + charStep * dt < HEIGHT:
-            pos.y += charStep * dt
-        elif keys[pygame.K_a] and pos.x - charStep * dt > 0:
-            pos.x -= charStep * dt
-        elif keys[pygame.K_d] and pos.x + charStep * dt < WIDTH:
-            pos.x += charStep * dt
-
-        #-----
         
+            
         screen.blit(self.imagesUp, self.rectUp)
         animationUpdate = 20
         self.counter += 1 
@@ -217,7 +206,7 @@ gooseLastMoveTime = pygame.time.get_ticks()
 moveInterval = 1000  # milliseconds (1.5 seconds)
 goose = Goose(goosePos.x-80,goosePos.y-50)
 pink = pinkMan(50,50)
-
+direction = "down"
 
 # main loop
 while running:
@@ -243,12 +232,16 @@ while running:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w] and pos.y - charStep * dt > 0:
         pos.y -= charStep * dt
+        direction = "up"
     elif keys[pygame.K_s] and pos.y + charStep * dt < HEIGHT:
         pos.y += charStep * dt
+        direction = "down"
     elif keys[pygame.K_a] and pos.x - charStep * dt > 0:
         pos.x -= charStep * dt
+        direction = "left"
     elif keys[pygame.K_d] and pos.x + charStep * dt < WIDTH:
         pos.x += charStep * dt
+        direction = "right"
 
     if keys[pygame.K_UP] and pos2.y - charStep * dt > 0:
         pos2.y -= charStep * dt
@@ -292,7 +285,7 @@ while running:
     #PinkMan
     pink.update_x(pos.x)
     pink.update_y(pos.y)
-    pink.update()
+    pink.update(direction)
 
     # update display
     pygame.display.flip()
