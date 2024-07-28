@@ -139,10 +139,10 @@ class Goose(pygame.sprite.Sprite):
 #pink man image
 class pinkMan(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        self.pink_down = []
-        self.pink_up = []
-        self.pink_right = []
-        self.pink_left = []
+        self.pink_d = []
+        self.pink_u = []
+        self.pink_r = []
+        self.pink_l = []
         self.index = 0
         self.counter = 0
         self.direction = "down"
@@ -150,22 +150,26 @@ class pinkMan(pygame.sprite.Sprite):
             if i/4 <= 1:
                 pink_down = pygame.image.load(f'realSprite/pink{i}.png')
                 # img_right = pygame.transform.scale(img_right, (100, 60))
-                self.pink_down.append(pink_down)
+                self.pink_d.append(pink_down)
             elif i/4 <= 2:
                 pink_up = pygame.image.load(f'realSprite/pink{i}.png')
             # img_right = pygame.transform.scale(img_right, (100, 60))
-                self.pink_up.append(pink_up)
+                self.pink_u.append(pink_up)
+                
             elif i/4 <= 3:
                 pink_right = pygame.image.load(f'realSprite/pink{i}.png')
             # img_right = pygame.transform.scale(img_right, (100, 60))
-                self.pink_right.append(pink_right)
+                self.pink_r.append(pink_right)
             else:
                 pink_left = pygame.image.load(f'realSprite/pink{i}.png')
             # img_right = pygame.transform.scale(img_right, (100, 60))
-                self.pink_left.append(pink_left)
+                self.pink_l.append(pink_left)
            
-        self.imagesUp = self.pink_up[self.index]
+        self.imagesUp = self.pink_u[self.index]
         self.rectUp = self.imagesUp.get_rect()
+
+        print("pinup",self.pink_u)
+
 
         self.rectUp.x = x
         self.rectUp.y = y
@@ -179,9 +183,9 @@ class pinkMan(pygame.sprite.Sprite):
         if self.counter> animationUpdate:
             self.counter = 0
             self.index += 1
-            if self.index >= len(self.pinkUp):
+            if self.index >= len(self.pink_u):
                 self.index = 0
-            self.images = self.pink_up[self.index]
+            self.images = self.pink_u[self.index]
         screen.blit(self.imagesUp, self.rectUp)
 
 
@@ -191,7 +195,6 @@ gooseLastMoveTime = pygame.time.get_ticks()
 moveInterval = 1000  # milliseconds (1.5 seconds)
 goose = Goose(goosePos.x-80,goosePos.y-50)
 pink = pinkMan(50,50)
-
 
 
 # main loop
