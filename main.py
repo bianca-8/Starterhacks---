@@ -61,7 +61,6 @@ def collideStick(posx, posy, stick, amount):
         amount += 1  # + 1 to sticks that the player has
 
     return amount
-#<<<<<<< HEAD
     
 #create character sprite
 class CharacterMale(pygame.sprite.Sprite):
@@ -83,17 +82,20 @@ class Goose(pygame.sprite.Sprite):
            img_right = pygame.transform.scale(img_right, (100, 60))
            self.images_right.append(img_right)
            
-       self.images
-       self.rect = self.image.get_rect()
+       self.images = self.images_right[self.index]
+       self.rect = self.images.get_rect()
+       self.rect.x = x
+       self.rect.y = y
        self.rect.topleft = (x, y)
-       self.mask = pygame.mask.from_surface(self.image)
-# =======
-# >>>>>>> e3b33e0db7813585685ee7a573367a01adfceb4a
+       self.mask = pygame.mask.from_surface(self.images)
+
+    def update(self):
+        screen.blit(self.images, self.rect)
 
 # Initialize time for goose movement
 gooseLastMoveTime = pygame.time.get_ticks()
 moveInterval = 1500  # milliseconds (1.5 seconds)
-
+goose = Goose(100, 100)
 # Main loop
 while running:
     for event in pygame.event.get():
@@ -142,6 +144,7 @@ while running:
     # Draw characters
     pygame.draw.circle(screen, "red", pos, 40)
     pygame.draw.circle(screen, "blue", pos2, 40)
+    goose.update()
 
     # Draw fences
     if keys[pygame.K_f] and stick1 > 0:
