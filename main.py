@@ -16,6 +16,7 @@ charTime = 3 # character speed
 
 # images
 bg = pygame.image.load("bg.png")
+charStep = 300  # character steps
 
 # initialize Pygame
 pygame.init()
@@ -30,6 +31,10 @@ pos2 = pygame.Vector2(WIDTH / 2 + 120, HEIGHT / 2 + 50)
 gooseRandx = random.randint(0, WIDTH // GRID - 1)
 gooseRandy = random.randint(0, HEIGHT // GRID - 1)
 goosePos = pygame.Vector2(gooseRandx * GRID + GRID // 2, gooseRandy * GRID + GRID // 2)
+newX = 0
+newY = 0
+
+    
 
 # random stick positions
 randx = random.randint(0, WIDTH // GRID - 1)
@@ -68,7 +73,8 @@ def collideStick(posx, posy, stick, amount):
         amount += 1 # + 1 to sticks that the player has
 
     return amount
-    
+
+
 #create character sprite
 class CharacterMale(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -81,15 +87,150 @@ class CharacterMale(pygame.sprite.Sprite):
 #create goose sprite
 class Goose(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        '''self.image = pygame.image.load() <-- when we get the image
-       self.rect = self.image.get_rect()
+       self.images_right = []
+       self.images_left = []
+       self.index = 0
+
+       self.counter = 20
+       for i in range(1, 5): #adds the images to a list with a loop for the animation
+           img_right = pygame.image.load(f'realSprite/Goose{i}.png')
+           img_right = pygame.transform.scale(img_right, (120, 80))
+           img_left = pygame.transform.flip(img_right, True, False)
+
+       self.counter = 0
+       for i in range(1, 5): #adds the images to a list with a loop for the animation
+           img_right = pygame.image.load(f'realSprite/Goose{i}.png')
+           img_right = pygame.transform.scale(img_right, (120, 80))
+           self.images_right.append(img_right)
+           self.images_left.append(img_left)
+           
+       self.images = self.images_right[self.index]
+       self.rect = self.images.get_rect()
+       self.rect.x = x
+       self.rect.y = y
+       self.direction = 0
        self.rect.topleft = (x, y)
-       self.mask = pygame.mask.from_surface(self.image)'''
+       self.mask = pygame.mask.from_surface(self.images)
+
+    def update(self):
+        global gooseLastMoveTime 
+        newX = self.rect.x
+        newY = self.rect.y
+
+        currentTime = pygame.time.get_ticks()
+        if currentTime - gooseLastMoveTime > moveInterval:
+            gooseLastMoveTime = currentTime
+            gooseMove = 80
+            gooseDirec = random.randint(0, 3)
+            
+            if gooseDirec == 0:  # up
+                newY = self.rect.y - gooseMove
+                if newY > 0:  # check if new Y position is within bounds
+                    self.rect.y = newY            
+            elif gooseDirec == 1:  # down
+                newY = self.rect.y + gooseMove
+                if newY < HEIGHT:  # check if new Y position is within bounds
+                    self.rect.y = newY
+            elif gooseDirec == 2:  # left
+                newX = self.rect.x - gooseMove
+                if newX > 0:  # check if new X position is within bounds
+                    self.rect.x = newX
+                    self.direction = -1
+            elif gooseDirec == 3:  # right
+                newX = self.rect.x + gooseMove
+                if newX < WIDTH:  # check if new X position is within bounds
+                    self.rect.x = newX
+                    self.direction = 1
+
+        self.rect.x = newX
+        self.rect.y = newY
+        # animating the geese
+        fly_cooldown = 20
+        print(self.counter)
+        self.counter += 1 
+        if self.counter> fly_cooldown:
+            self.counter = 0
+            self.index += 1
+            if self.index >= len(self.images_right):
+                self.index = 0
+            if self.direction == 1:
+                self.images = self.images_right[self.index]
+            if self.direction == -1:
+                self.images = self.images_left[self.index]
+        screen.blit(self.images, self.rect)
+
+
+#pink man image
+class pinkMan(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.x = x
+        self.y = y
+        self.pink_d = []
+        self.pink_u = []
+        self.pink_r = []
+        self.pink_l = []
+        self.index = 0
+        self.counter = 0
+        for i in range(1, 17):
+            if i/4 <= 1:
+                pink_down = pygame.image.load(f'realSprite/pink{i}.png')
+                # img_right = pygame.transform.scale(img_right, (100, 60))
+                self.pink_d.append(pink_down)
+            elif i/4 <= 2:
+                pink_up = pygame.image.load(f'realSprite/pink{i}.png')
+            # img_right = pygame.transform.scale(img_right, (100, 60))
+                self.pink_u.append(pink_up)
+                
+            elif i/4 <= 3:
+                pink_right = pygame.image.load(f'realSprite/pink{i}.png')
+            # img_right = pygame.transform.scale(img_right, (100, 60))
+                self.pink_r.append(pink_right)
+            else:
+                pink_left = pygame.image.load(f'realSprite/pink{i}.png')
+            # img_right = pygame.transform.scale(img_right, (100, 60))
+                self.pink_l.append(pink_left)
+           
+        self.imagesUp = self.pink_u[self.index]
+        self.rectUp = self.imagesUp.get_rect()
+
+        self.rectUp.x = x
+        self.rectUp.y = y
+        self.rectUp.topleft = (x, y)
+        self.mask = pygame.mask.from_surface(self.imagesUp)
+
+    def update_x(self, new_value):
+        self.x = new_value
+        self.rectUp.x = new_value
+
+    def update_y(self, new_value):
+        self.y = new_value
+        self.rectUp.y = new_value
+
+    def update(self, direction):
+        global keys
+        
+            
+        screen.blit(self.imagesUp, self.rectUp)
+        animationUpdate = 20
+        self.counter += 1 
+        if self.counter > animationUpdate:
+            self.counter = 0
+            self.index += 1
+            print("len",len(self.pink_u),self.index)
+            if self.index >= len(self.pink_u):
+                self.index = 0
+            self.imagesUp = self.pink_u[self.index]
+        screen.blit(self.imagesUp, self.rectUp)
+
+
 
 # initialize time for goose movement
 gooseLastMoveTime = pygame.time.get_ticks()
 moveInterval = 1000  # milliseconds (1.5 seconds)
+goose = Goose(goosePos.x-65,goosePos.y-50)
+pink = pinkMan(50,50)
+direction = "down"
 
 # main loop
 while running:
@@ -136,6 +277,19 @@ while running:
         if newCX < WIDTH:  # check if new X position is within bounds
             pos.x = newCX
         clock.tick(charTime)
+
+    if keys[pygame.K_w] and pos.y - charStep * dt > 0:
+        pos.y -= charStep * dt
+        direction = "up"
+    elif keys[pygame.K_s] and pos.y + charStep * dt < HEIGHT:
+        pos.y += charStep * dt
+        direction = "down"
+    elif keys[pygame.K_a] and pos.x - charStep * dt > 0:
+        pos.x -= charStep * dt
+        direction = "left"
+    elif keys[pygame.K_d] and pos.x + charStep * dt < WIDTH:
+        pos.x += charStep * dt
+        direction = "right"
 
     if keys[pygame.K_UP]:
         newCY = pos2.y - GRID
@@ -184,32 +338,13 @@ while running:
     for fence in fences:
         pygame.draw.line(screen, "black", (fence[0], fence[1]), (fence[2], fence[3]), 5)
 
-     # update goose position
-    currentTime = pygame.time.get_ticks()
-    if currentTime - gooseLastMoveTime > moveInterval:
-        gooseLastMoveTime = currentTime
-        gooseMove = 80
-        gooseDirec = random.randint(0, 3)
-        
-        if gooseDirec == 0:  # up
-            newY = goosePos.y - gooseMove
-            if newY > 0:  # check if new Y position is within bounds
-                goosePos.y = newY
-        elif gooseDirec == 1:  # down
-            newY = goosePos.y + gooseMove
-            if newY < HEIGHT:  # check if new Y position is within bounds
-                goosePos.y = newY
-        elif gooseDirec == 2:  # left
-            newX = goosePos.x - gooseMove
-            if newX > 0:  # check if new X position is within bounds
-                goosePos.x = newX
-        elif gooseDirec == 3:  # right
-            newX = goosePos.x + gooseMove
-            if newX < WIDTH:  # check if new X position is within bounds
-                goosePos.x = newX
-
     # draw goose
-    pygame.draw.circle(screen, "green", goosePos, 40)
+    goose.update()
+
+    #PinkMan
+    pink.update_x(pos.x)
+    pink.update_y(pos.y)
+    pink.update(direction)
 
     # update display
     pygame.display.flip()
