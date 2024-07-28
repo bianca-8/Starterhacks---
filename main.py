@@ -90,17 +90,11 @@ class Goose(pygame.sprite.Sprite):
        self.images_right = []
        self.images_left = []
        self.index = 0
-
-       self.counter = 20
-       for i in range(1, 5): #adds the images to a list with a loop for the animation
-           img_right = pygame.image.load(f'realSprite/Goose{i}.png')
-           img_right = pygame.transform.scale(img_right, (120, 80))
-           img_left = pygame.transform.flip(img_right, True, False)
-
        self.counter = 0
        for i in range(1, 5): #adds the images to a list with a loop for the animation
            img_right = pygame.image.load(f'realSprite/Goose{i}.png')
            img_right = pygame.transform.scale(img_right, (120, 80))
+           img_left = pygame.transform.flip(img_right, True, False)
            self.images_right.append(img_right)
            self.images_left.append(img_left)
            
@@ -108,7 +102,7 @@ class Goose(pygame.sprite.Sprite):
        self.rect = self.images.get_rect()
        self.rect.x = x
        self.rect.y = y
-       self.direction = 0
+       self.direction = 1
        self.rect.topleft = (x, y)
        self.mask = pygame.mask.from_surface(self.images)
 
@@ -145,8 +139,7 @@ class Goose(pygame.sprite.Sprite):
         self.rect.x = newX
         self.rect.y = newY
         # animating the geese
-        fly_cooldown = 20
-        print(self.counter)
+        fly_cooldown = 10
         self.counter += 1 
         if self.counter> fly_cooldown:
             self.counter = 0
