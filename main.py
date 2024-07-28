@@ -15,8 +15,9 @@ running = True
 dt = 0
 
 # initialize positions
-pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
-pos2 = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+pos = pygame.Vector2(screen.get_width() / 2 - 120, screen.get_height() / 2 + 50)
+pos2 = pygame.Vector2(screen.get_width() / 2 + 120, screen.get_height() / 2 + 50)
+goosePos = pygame.Vector2(random.randint(0, 1280), random.randint(0, 780))
 
 # random stick positions
 randx = random.randint(0, 15)
@@ -67,6 +68,10 @@ class Goose(pygame.sprite.Sprite):
        self.rect = self.image.get_rect()
        self.rect.topleft = (x, y)
        self.mask = pygame.mask.from_surface(self.image)'''
+
+# initialize time for goose movement
+gooseLastMoveTime = pygame.time.get_ticks()
+moveInterval = 1500  # milliseconds (0.1 second)
 
 # main loop
 while running:
@@ -125,9 +130,19 @@ while running:
     for fence in fences:
         pygame.draw.line(screen, "black", (fence[0], fence[1]), (fence[2], fence[3]), 5)
 
-    # goose
-    pygame.draw.circle(screen, "red", pos, 40)
-    random.randint(0, 15)
+     # update goose position
+    currentTime = pygame.time.get_ticks()
+    if currentTime - gooseLastMoveTime > moveInterval:
+        gooseLastMoveTime = currentTime
+        gooseMoveX = random.randint(-40, 40)
+        gooseMoveY = random.randint(-40, 40)
+        if goosePos.x + gooseMoveX > 0 and goosePos.x + gooseMoveX < 1280:
+            goosePos.x += gooseMoveX
+        if goosePos.y + gooseMoveY > 0 and goosePos.y + gooseMoveY < 780:
+            goosePos.y += gooseMoveY
+
+    # draw goose
+    pygame.draw.circle(screen, "green", goosePos, 40)
 
     # update display
     pygame.display.flip()
