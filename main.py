@@ -26,6 +26,8 @@ lastDirect = "w" # last direction character was facing (w is up, s is down, a is
 
 # images
 bg = pygame.image.load("bg.png")
+bg = pygame.transform.scale(bg, (1280, 780))
+
 
 # initialize positions
 pos = pygame.Vector2(WIDTH / 2 - 40, HEIGHT / 2 + 50)
