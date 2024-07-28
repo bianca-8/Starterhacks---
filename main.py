@@ -146,7 +146,6 @@ class pinkMan(pygame.sprite.Sprite):
         self.index = 0
         self.counter = 0
         self.direction = "down"
-        self.animation_count = 0
         for i in range(1, 17):
             if i/4 <= 1:
                 pink_down = pygame.image.load(f'realSprite/pink{i}.png')
@@ -175,6 +174,15 @@ class pinkMan(pygame.sprite.Sprite):
 
     def update(self):
         screen.blit(self.imagesUp, self.rectUp)
+        animationUpdate = 20
+        self.counter += 1 
+        if self.counter> animationUpdate:
+            self.counter = 0
+            self.index += 1
+            if self.index >= len(self.pinkUp):
+                self.index = 0
+            self.images = self.pink_up[self.index]
+        screen.blit(self.imagesUp, self.rectUp)
 
 
 
@@ -182,6 +190,9 @@ class pinkMan(pygame.sprite.Sprite):
 gooseLastMoveTime = pygame.time.get_ticks()
 moveInterval = 1000  # milliseconds (1.5 seconds)
 goose = Goose(goosePos.x-80,goosePos.y-50)
+pink = pinkMan(50,50)
+
+
 
 # main loop
 while running:
@@ -251,6 +262,9 @@ while running:
 
     # draw goose
     goose.update()
+
+    #PinkMan
+    pink.update()
 
     # update display
     pygame.display.flip()
