@@ -34,8 +34,6 @@ randy3 = random.randint(0, 9)
 def collideStick(posx, posy, stick, amount):
     global randx, randy, randx1, randy1, randx2, randy2, randx3, randy3
 
-    
-
     if stick == 0 and (posx > randx * 80 and posx < randx * 80 + 80) and (posy > randy * 80 and posy < randy * 80 + 80):
         randx, randy = random.randint(0, 15), random.randint(0, 9)
         amount += 1 # + 1 to sticks that the player has
@@ -117,15 +115,17 @@ while running:
     # draw characters
     pygame.draw.circle(screen, "red", pos, 40)
     pygame.draw.circle(screen, "blue", pos2, 40)
+    if keys[pygame.K_f]: # planting fence
+        pygame.draw.line(screen, "black", (pos.x, pos.y - 40), (pos.x, pos.y + 40), 5)
+    if keys[pygame.K_SPACE]: # planting fence
+        pygame.draw.line(screen, "black", (pos2.x, pos2.y-40), (pos2.x, pos2.y + 40), 5)
 
     # goose
-    pygame.draw.circle(screen, "red", pos, 40)
-    random.randint(0, 15)
+    #pygame.draw.circle(screen, "red", pos, 40)
+    #random.randint(0, 15)
 
     # update display
     pygame.display.flip()
-
-    print(stick1, stick2)
 
     # limit FPS
     dt = clock.tick(60) / 1000
