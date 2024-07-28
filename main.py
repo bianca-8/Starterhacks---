@@ -160,12 +160,13 @@ class Goose(pygame.sprite.Sprite):
 class pinkMan(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.x = x
-        self.y = y
+        self.x = x-25
+        self.y = y-25
         self.pink_d = []
         self.pink_u = []
         self.pink_r = []
         self.pink_l = []
+        self.pink = self.pink_u
         self.index = 0
         self.counter = 0
         for i in range(1, 17):
@@ -190,34 +191,70 @@ class pinkMan(pygame.sprite.Sprite):
         self.imagesUp = self.pink_u[self.index]
         self.rectUp = self.imagesUp.get_rect()
 
-        self.rectUp.x = x
-        self.rectUp.y = y
-        self.rectUp.topleft = (x, y)
-        self.mask = pygame.mask.from_surface(self.imagesUp)
+        self.imagesDown = self.pink_d[self.index]
+        self.rectDown = self.imagesDown.get_rect()
+
+        self.imagesRight = self.pink_r[self.index]
+        self.rectRight = self.imagesRight.get_rect()
+
+        self.imagesLeft = self.pink_l[self.index]
+        self.rectLeft = self.imagesLeft.get_rect()
+
+        self.rect = self.rectUp
+        self.images = self.imagesUp
+
+        self.rect.x = x-25
+        self.rect.y = y-25
+        self.rect.topleft = (x-25, y-25)
+        self.mask = pygame.mask.from_surface(self.images)
 
     def update_x(self, new_value):
-        self.x = new_value
-        self.rectUp.x = new_value
+        self.x = new_value-25
+        self.rect.x = new_value-25
 
     def update_y(self, new_value):
-        self.y = new_value
-        self.rectUp.y = new_value
+        self.y = new_value-25
+        self.rect.y = new_value-25
 
     def update(self, direction):
         global keys
         
+        if direction == "up":
+            if self.images != self.imagesUp and self.rect != self.rectUp and pink != self.pink_u:
+                self.images = self.imagesUp
+                self.rect = self.rectUp
+                self.pink = self.pink_u
+                self.index = 0
+        elif direction == "down":
+            if self.images != self.imagesDown and self.rect != self.rectDown and pink != self.pink_d:
+                self.images = self.imagesDown
+                self.rect = self.rectDown
+                self.pink = self.pink_d
+                self.index = 0
+        elif direction == "left":
+            if self.images != self.imagesLeft and self.rect != self.rectLeft and pink != self.pink_l:
+                self.images = self.imagesLeft
+                self.rect = self.rectLeft
+                self.pink = self.pink_l
+                self.index = 0
+        elif direction == "right": #right
+            if self.images != self.imagesRight and self.rect != self.rectRight and pink != self.pink_r:
+                self.images = self.imagesRight
+                self.rect = self.rectRight
+                self.pink = self.pink_r
+                self.index = 0
             
-        screen.blit(self.imagesUp, self.rectUp)
+        screen.blit(self.images, self.rect)
         animationUpdate = 20
         self.counter += 1 
         if self.counter > animationUpdate:
             self.counter = 0
             self.index += 1
-            print("len",len(self.pink_u),self.index)
-            if self.index >= len(self.pink_u):
+            # print("len",len(self.pink_u),self.index)
+            if self.index >= len(self.pink):
                 self.index = 0
-            self.imagesUp = self.pink_u[self.index]
-        screen.blit(self.imagesUp, self.rectUp)
+            self.images = self.pink[self.index]
+        screen.blit(self.images, self.rect)
 
 
 
