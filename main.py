@@ -7,12 +7,6 @@ GRID = 80
 WIDTH = 1280
 HEIGHT = 780
 
-# variables
-stick1 = 0 # amount of sticks player 1 has
-stick2 = 0 # amount of sticks player 2 has
-fences = [] # list of fence positions
-charStep = 300  # character steps
-
 # initialize Pygame
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -20,16 +14,31 @@ clock = pygame.time.Clock()
 running = True
 dt = 0
 
+# fonts
+font = pygame.font.SysFont("Times New Roman", 25)
+
+# variables
+stick = 0 # amount of sticks player 1 has
+fences = [] # list of fence positions
+charTime = 3 # character speed
+lastDirect = "w" # last direction character was facing (w is up, s is down, a is left, d is right)
+
+# images
+bg = pygame.image.load("bg.png")
+# load fence image
+img_fence =pygame.image.load('realSprite/fencePost.png')
+img_fence = pygame.transform.scale(img_fence, (70, 100))
+# load stick image
+img_stick =pygame.image.load('realSprite/Stick.png')
+img_stick = pygame.transform.scale(img_stick, (70, 100))
+
 # initialize positions
-pos = pygame.Vector2(WIDTH / 2 - 120, HEIGHT / 2 + 50)
-pos2 = pygame.Vector2(WIDTH / 2 + 120, HEIGHT / 2 + 50)
+pos = pygame.Vector2(WIDTH / 2 - 40, HEIGHT / 2 + 50)
 gooseRandx = random.randint(0, WIDTH // GRID - 1)
 gooseRandy = random.randint(0, HEIGHT // GRID - 1)
 goosePos = pygame.Vector2(gooseRandx * GRID + GRID // 2, gooseRandy * GRID + GRID // 2)
 newX = 0
 newY = 0
-
-    
 
 # random stick positions
 randx = random.randint(0, WIDTH // GRID - 1)
@@ -43,12 +52,6 @@ randy2 = random.randint(0, HEIGHT // GRID - 1)
 
 randx3 = random.randint(0, WIDTH // GRID - 1)
 randy3 = random.randint(0, HEIGHT // GRID - 1)
-
-# Snap fence to the nearest grid
-def snapToGrid(pos):
-    x = round(pos.x / GRID) * GRID + GRID // 2
-    y = round(pos.y / GRID) * GRID
-    return pygame.Vector2(x, y)
 
 # character collision with sticks
 def collideStick(posx, posy, stick, amount):
@@ -69,31 +72,25 @@ def collideStick(posx, posy, stick, amount):
 
     return amount
 
+# check if new fence overlaps with any existing fences
+def checkFenceOverlap(new_fence):
+    for fence in fences:
+        if (fence[0] == new_fence[0] and fence[1] == new_fence[1] and fence[2] == new_fence[2] and fence[3] == new_fence[3]):
+            return True
+    return False
 
-#create character sprite
-class CharacterMale(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        '''self.image = pygame.image.load() <-- when we get the image
-       self.rect = self.image.get_rect()
-       self.rect.topleft = (x, y)
-       self.mask = pygame.mask.from_surface(self.image)'''
-        
+
 #create goose sprite
 class Goose(pygame.sprite.Sprite):
     def __init__(self, x, y):
        self.images_right = []
        self.images_left = []
        self.index = 0
-       self.counter = 20
-       for i in range(1, 5): #adds the images to a list with a loop for the animation
-           img_right = pygame.image.load(f'realSprite/Goose{i}.png')
-           img_right = pygame.transform.scale(img_right, (120, 80))
-           img_left = pygame.transform.flip(img_right, True, False)
        self.counter = 0
        for i in range(1, 5): #adds the images to a list with a loop for the animation
            img_right = pygame.image.load(f'realSprite/Goose{i}.png')
            img_right = pygame.transform.scale(img_right, (120, 80))
+           img_left = pygame.transform.flip(img_right, True, False)
            self.images_right.append(img_right)
            self.images_left.append(img_left)
            
@@ -101,7 +98,7 @@ class Goose(pygame.sprite.Sprite):
        self.rect = self.images.get_rect()
        self.rect.x = x
        self.rect.y = y
-       self.direction = 0
+       self.direction = 1
        self.rect.topleft = (x, y)
        self.mask = pygame.mask.from_surface(self.images)
 
@@ -148,7 +145,6 @@ class Goose(pygame.sprite.Sprite):
             if self.direction == -1:
                 self.images = self.images_left[self.index]
         screen.blit(self.images, self.rect)
-
 
 #pink man image
 class pinkMan(pygame.sprite.Sprite):
@@ -210,7 +206,8 @@ class pinkMan(pygame.sprite.Sprite):
             self.direction = 3
         elif direction == "right": #right
             self.direction = 4
-        
+            
+        screen.blit(self.images, self.rect)
         animationUpdate = 20
         self.counter += 1 
         if self.counter > animationUpdate or direction != self.prevDirection:
@@ -230,8 +227,6 @@ class pinkMan(pygame.sprite.Sprite):
         self.prevDirection = direction
         screen.blit(self.images, self.rect)
 
-
-
 # initialize time for goose movement
 gooseLastMoveTime = pygame.time.get_ticks()
 moveInterval = 1000  # milliseconds (1.5 seconds)
@@ -248,10 +243,18 @@ while running:
     # fill the screen with a color
     screen.fill("white")
 
+    # draw background
     screen.blit(bg, (0, 0))
 
+    # stick text
+    text = font.render(f"Sticks: {stick}", True, "black")
+    textRect = text.get_rect()
+    textRect.center = (WIDTH // 2, 30) # center text
+    pygame.draw.rect(screen, "white", textRect) # stick text border
+    screen.blit(text, textRect) # stick text
+
     """
-    # draw background grid - DELETE AFTER
+    # background grid - DELETE AFTER
     for i in range(0, WIDTH, GRID):
         for j in range(0, HEIGHT, GRID):
             pygame.draw.rect(screen, "black", (i, j, GRID, GRID), 5)"""
@@ -267,90 +270,156 @@ while running:
     if keys[pygame.K_w]:
         newCY = pos.y - GRID
         if newCY > 0:  # check if new Y position is within bounds
-            pos.y = newCY
+            # check for collision with fences
+            collision = False
+            for fence in fences:
+                if (pos.x >= fence[0] and pos.x <= fence[2] and
+                    newCY >= fence[1] and newCY <= fence[3]):
+                    collision = True
+                    break
+            if not collision:
+                pos.y = newCY
         clock.tick(charTime)
+        lastDirect = "w"
+        direction = "up"
     elif keys[pygame.K_s]:
         newCY = pos.y + GRID
         if newCY < HEIGHT:  # check if new Y position is within bounds
-            pos.y = newCY
+            # check for collision with fences
+            collision = False
+            for fence in fences:
+                if (pos.x >= fence[0] and pos.x <= fence[2] and
+                    newCY >= fence[1] and newCY <= fence[3]):
+                    collision = True
+                    break
+            if not collision:
+                pos.y = newCY
         clock.tick(charTime)
+        lastDirect = "s"
+        direction = "down"
     elif keys[pygame.K_a]:
         newCX = pos.x - GRID
         if newCX > 0:  # check if new X position is within bounds
-            pos.x = newCX
+            # check for collision with fences
+            collision = False
+            for fence in fences:
+                if (newCX >= fence[0] and newCX <= fence[2] and
+                    pos.y >= fence[1] and pos.y <= fence[3]):
+                    collision = True
+                    break
+            if not collision:
+                pos.x = newCX
         clock.tick(charTime)
+        lastDirect = "a"
+        direction = "left"
     elif keys[pygame.K_d]:
         newCX = pos.x + GRID
         if newCX < WIDTH:  # check if new X position is within bounds
-            pos.x = newCX
+            # check for collision with fences
+            collision = False
+            for fence in fences:
+                if (newCX >= fence[0] and newCX <= fence[2] and
+                    pos.y >= fence[1] and pos.y <= fence[3]):
+                    collision = True
+                    break
+            if not collision:
+                pos.x = newCX
         clock.tick(charTime)
-
-    if keys[pygame.K_w] and pos.y - charStep * dt > 0:
-        pos.y -= charStep * dt
-        direction = "up"
-    elif keys[pygame.K_s] and pos.y + charStep * dt < HEIGHT:
-        pos.y += charStep * dt
-        direction = "down"
-    elif keys[pygame.K_a] and pos.x - charStep * dt > 0:
-        pos.x -= charStep * dt
-        direction = "left"
-    elif keys[pygame.K_d] and pos.x + charStep * dt < WIDTH:
-        pos.x += charStep * dt
+        lastDirect = "d"
         direction = "right"
 
     if keys[pygame.K_UP]:
-        newCY = pos2.y - GRID
+        newCY = pos.y - GRID
         if newCY > 0:  # check if new Y position is within bounds
-            pos2.y = newCY
+            # check for collision with fences
+            collision = False
+            for fence in fences:
+                if (pos.x >= fence[0] and pos.x <= fence[2] and
+                    newCY >= fence[1] and newCY <= fence[3]):
+                    collision = True
+                    break
+            if not collision:
+                pos.y = newCY
         clock.tick(charTime)
+        lastDirect = "w"
+        direction = "up"
     elif keys[pygame.K_DOWN]:
-        newCY = pos2.y + GRID
+        newCY = pos.y + GRID
         if newCY < HEIGHT:  # check if new Y position is within bounds
-            pos2.y = newCY
+            # check for collision with fences
+            collision = False
+            for fence in fences:
+                if (pos.x >= fence[0] and pos.x <= fence[2] and
+                    newCY >= fence[1] and newCY <= fence[3]):
+                    collision = True
+                    break
+            if not collision:
+                pos.y = newCY
         clock.tick(charTime)
+        lastDirect = "s"
+        direction = "down"
     elif keys[pygame.K_LEFT]:
-        newCX = pos2.x - GRID
+        newCX = pos.x - GRID
         if newCX > 0:  # check if new X position is within bounds
-            pos2.x = newCX
+            # check for collision with fences
+            collision = False
+            for fence in fences:
+                if (newCX >= fence[0] and newCX <= fence[2] and
+                    pos.y >= fence[1] and pos.y <= fence[3]):
+                    collision = True
+                    break
+            if not collision:
+                pos.x = newCX
         clock.tick(charTime)
+        lastDirect = "a"
+        direction = "left"
     elif keys[pygame.K_RIGHT]:
-        newCX = pos2.x + GRID
+        newCX = pos.x + GRID
         if newCX < WIDTH:  # check if new X position is within bounds
-            pos2.x = newCX
+            # check for collision with fences
+            collision = False
+            for fence in fences:
+                if (newCX >= fence[0] and newCX <= fence[2] and
+                    pos.y >= fence[1] and pos.y <= fence[3]):
+                    collision = True
+                    break
+            if not collision:
+                pos.x = newCX
         clock.tick(charTime)
+        lastDirect = "d"
+        direction = "right"
 
     # check character collisions with sticks
     for i in range(4):
-        stick1 = collideStick(pos.x, pos.y, i, stick1)
-        stick2 = collideStick(pos2.x, pos2.y, i, stick2)
-
-    # draw characters
-    pygame.draw.circle(screen, "red", pos, 40)
-    pygame.draw.circle(screen, "blue", pos2, 40)
+        stick = collideStick(pos.x, pos.y, i, stick)
 
     # draw fences
-    print(stick1, stick2)
-    if keys[pygame.K_f] and stick1 > 0:
-        fencePos = snapToGrid(pos)
-        end_pos = snapToGrid(pos + pygame.Vector2(0, -80))  # character 1 fence
-        fences.append((fencePos.x, fencePos.y, end_pos.x, end_pos.y))
-        stick1 -= 1
-
-    if keys[pygame.K_SPACE] and stick2 > 0:
-        fencePos = snapToGrid(pos2)
-        end_pos = snapToGrid(pos2 + pygame.Vector2(0, -80))  # character 2 fence
-        fences.append((fencePos.x, fencePos.y, end_pos.x, end_pos.y))
-        stick2 -= 1
+    #print(stick) BRING BACK
+    if keys[pygame.K_SPACE] and stick > 0:
+        if (lastDirect == "w"):
+            fencePos = pygame.Vector2(pos.x, pos.y - GRID - GRID // 2)
+        elif (lastDirect == "s"):
+            fencePos = pygame.Vector2(pos.x, pos.y + GRID // 2)
+        elif (lastDirect == "a"):
+            fencePos = pygame.Vector2(pos.x - GRID, pos.y - GRID // 2)
+        elif (lastDirect == "d"):
+            fencePos = pygame.Vector2(pos.x + GRID, pos.y - GRID // 2)
+        endPos = fencePos + pygame.Vector2(0, 80)
+        newFence = (fencePos.x, fencePos.y, endPos.x, endPos.y)
+        if not checkFenceOverlap(newFence):
+            fences.append(newFence)
+            stick -= 1  # only reduce stick if placing fence in valid place
+        clock.tick(3) 
     
     for fence in fences:
-        pygame.draw.line(screen, "black", (fence[0], fence[1]), (fence[2], fence[3]), 5)
+        screen.blit(img_fence, (fence[0]-40, fence[1]-15))
 
     # draw goose
     goose.update()
 
     #PinkMan
-    pink.update_x(pos.x)
-    pink.update_y(pos.y)
+    pink.update_x(pos.x-5)
+    pink.update_y(pos.y-35)
     pink.update(direction)
 
     # update display
