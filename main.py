@@ -52,18 +52,13 @@ def collideStick(posx, posy, stick, amount):
     
 =======
 #Splits Sprite Sheet
-
-class SpriteSheetMale:
-    sprite_sheet = None
-    def __init__(self, file_name):
-        self.sprite_sheet = pygame.image.load(file_name).convert_alpha()
-    def strip_from_sheet(sheet, start, size, columns, rows=1):
-        frames = []
-        for j in range(rows):
-            for i in range(columns):
-                location = (start[0]+size[0]*i, start[1]+size[1]*j)
-                frames.append(sheet.subsurface(pg.Rect(location,size)))
-        return frames
+def strip_from_sheet(sheet, start, size, columns, rows=1):
+    frames = []
+    for j in range(rows):
+        for i in range(columns):
+            location = (start[0]+size[0]*i, start[1]+size[1]*j)
+            frames.append(sheet.subsurface(pg.Rect(location,size)))
+    return frames
 
 
 >>>>>>> Stashed changes
@@ -71,8 +66,9 @@ class SpriteSheetMale:
 class CharacterMale(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        '''self.image = pygame.image.load() <-- when we get the image
-       self.rect = self.image.get_rect()
+        self.images_right = []
+        frames = strip_from_sheet()
+    '''self.rect = self.image.get_rect()
        self.rect.topleft = (x, y)
        self.mask = pygame.mask.from_surface(self.image)'''
         
