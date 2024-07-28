@@ -252,16 +252,12 @@ while running:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w] and pos.y - charStep * dt > 0:
         pos.y -= charStep * dt
-        direction = "up"
     elif keys[pygame.K_s] and pos.y + charStep * dt < HEIGHT:
         pos.y += charStep * dt
-        direction = "down"
     elif keys[pygame.K_a] and pos.x - charStep * dt > 0:
         pos.x -= charStep * dt
-        direction = "left"
     elif keys[pygame.K_d] and pos.x + charStep * dt < WIDTH:
         pos.x += charStep * dt
-        direction = "right"
 
     if keys[pygame.K_UP] and pos2.y - charStep * dt > 0:
         pos2.y -= charStep * dt
@@ -304,7 +300,7 @@ while running:
     #PinkMan
     pink.update_x(pos.x)
     pink.update_y(pos.y)
-    pink.update(direction)
+    pink.update()
 
     # update display
     pygame.display.flip()
