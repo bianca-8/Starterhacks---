@@ -26,8 +26,6 @@ lastDirect = "w" # last direction character was facing (w is up, s is down, a is
 
 # images
 bg = pygame.image.load("bg.png")
-bg = pygame.transform.scale(bg, (1280, 780))
-
 
 # initialize positions
 pos = pygame.Vector2(WIDTH / 2 - 40, HEIGHT / 2 + 50)
@@ -169,9 +167,9 @@ def collidePoop(posx, posy, poop, amount):
     return amount
 
 # check if new fence overlaps with any existing fences
-def checkFenceOverlap(new_fence):
+def checkFenceOverlap(newFence):
     for fence in fences:
-        if (fence[0] == new_fence[0] and fence[1] == new_fence[1] and fence[2] == new_fence[2] and fence[3] == new_fence[3]):
+        if (fence[0] == newFence[0] and fence[1] == newFence[1] and fence[2] == newFence[2] and fence[3] == newFence[3]):
             return True
     return False
         
@@ -322,16 +320,36 @@ class pinkMan(pygame.sprite.Sprite):
         self.prevDirection = direction
         screen.blit(self.images, self.rect)
 
+def is_in_front_of_fence(character_pos, direction, fences):
+    for fence in fences:
+        if direction == "up" and character_pos.y == fence[1] + GRID // 2 and fence[0] <= character_pos.x <= fence[2]:
+            return True
+        elif direction == "down" and character_pos.y == fence[3] - GRID // 2 and fence[0] <= character_pos.x <= fence[2]:
+            return True
+        elif direction == "left" and character_pos.x == fence[0] + GRID // 2 and fence[1] <= character_pos.y <= fence[3]:
+            return True
+        elif direction == "right" and character_pos.x == fence[2] - GRID // 2 and fence[1] <= character_pos.y <= fence[3]:
+            return True
+    return False
+
+def get_fence_in_front(character_pos, direction, fences):
+    for fence in fences:
+        if direction == "up" and character_pos.y == fence[1] + GRID // 2 and fence[0] <= character_pos.x <= fence[2]:
+            return fence
+        elif direction == "down" and character_pos.y == fence[3] - GRID // 2 and fence[0] <= character_pos.x <= fence[2]:
+            return fence
+        elif direction == "left" and character_pos.x == fence[0] + GRID // 2 and fence[1] <= character_pos.y <= fence[3]:
+            return fence
+        elif direction == "right" and character_pos.x == fence[2] - GRID // 2 and fence[1] <= character_pos.y <= fence[3]:
+            return fence
+    return None
+
 # initialize time for goose movement
 gooseLastMoveTime = pygame.time.get_ticks()
 moveInterval = 1000  # milliseconds (1.5 seconds)
 goose = Goose(goosePos.x-65,goosePos.y-50)
 pink = pinkMan(50,50)
 direction = "down"
-
-# initialize time for poop movement
-poopLastMoveTime = pygame.time.get_ticks()
-poopMoveInterval = 10000  # milliseconds (10 seconds)
 
 # main loop
 while running:
@@ -513,18 +531,22 @@ while running:
     pygame.draw.circle(screen, "red", pos, 40)
 
     # draw fences
-    if keys[pygame.K_SPACE] and stick > 0:
+    if keys[pygame.K_SPACE]:
         if (lastDirect == "w"):
-            fencePos = pygame.Vector2(pos.x, pos.y - GRID - GRID // 2)
+            if stick > 0:
+                fencePos = pygame.Vector2(pos.x, pos.y - GRID - GRID // 2)
         elif (lastDirect == "s"):
-            fencePos = pygame.Vector2(pos.x, pos.y + GRID // 2)
+            if stick > 0:
+                fencePos = pygame.Vector2(pos.x, pos.y + GRID // 2)
         elif (lastDirect == "a"):
-            fencePos = pygame.Vector2(pos.x - GRID, pos.y - GRID // 2)
+            if stick > 0:
+                fencePos = pygame.Vector2(pos.x - GRID, pos.y - GRID // 2)
         elif (lastDirect == "d"):
-            fencePos = pygame.Vector2(pos.x + GRID, pos.y - GRID // 2)
+            if stick > 0:
+                fencePos = pygame.Vector2(pos.x + GRID, pos.y - GRID // 2)
         endPos = fencePos + pygame.Vector2(0, 80)
         newFence = (fencePos.x, fencePos.y, endPos.x, endPos.y)
-        if not checkFenceOverlap(newFence):
+        if not checkFenceOverlap(newFence) and not checkFenceOverlap((pos.x, pos.y - GRID - GRID // 2, pos.x, pos.y - GRID // 2)):
             fences.append(newFence)
             stick -= 1  # only reduce stick if placing fence in valid place
         clock.tick(3) 
