@@ -191,7 +191,7 @@ while running:
 
     # draw goose
     pygame.draw.circle(screen, "green", goosePos, 40)
-    goose = Goose(100,100)
+    goose = Goose(goosePos.x,goosePos.y)
     goose.update()
 
     # update display
