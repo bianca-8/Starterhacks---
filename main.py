@@ -5,6 +5,7 @@ import random
 # variables
 stick1 = 0 # amount of sticks player 1 has
 stick2 = 0 # amount of sticks player 2 has
+fences = [] # list of fence positions
 
 # initialize Pygame
 pygame.init()
@@ -49,23 +50,12 @@ def collideStick(posx, posy, stick, amount):
 
     return amount
     
-#Splits Sprite Sheet
-def strip_from_sheet(sheet, start, size, columns, rows=1):
-    frames = []
-    for j in range(rows):
-        for i in range(columns):
-            location = (start[0]+size[0]*i, start[1]+size[1]*j)
-            frames.append(sheet.subsurface(pg.Rect(location,size)))
-    return frames
-
-
 #create character sprite
 class CharacterMale(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.images_right = []
-        frames = strip_from_sheet()
-    '''self.rect = self.image.get_rect()
+        '''self.image = pygame.image.load() <-- when we get the image
+       self.rect = self.image.get_rect()
        self.rect.topleft = (x, y)
        self.mask = pygame.mask.from_surface(self.image)'''
         
@@ -126,14 +116,18 @@ while running:
     # draw characters
     pygame.draw.circle(screen, "red", pos, 40)
     pygame.draw.circle(screen, "blue", pos2, 40)
-    if keys[pygame.K_f]: # planting fence
-        pygame.draw.line(screen, "black", (pos.x, pos.y - 40), (pos.x, pos.y + 40), 5)
-    if keys[pygame.K_SPACE]: # planting fence
-        pygame.draw.line(screen, "black", (pos2.x, pos2.y-40), (pos2.x, pos2.y + 40), 5)
+
+    # draw fences
+    if keys[pygame.K_f]:
+        fences.append((pos.x, pos.y - 40, pos.x, pos.y + 40))  # fence for character 1
+    if keys[pygame.K_SPACE]:
+        fences.append((pos2.x, pos2.y - 40, pos2.x, pos2.y + 40))  # fence for character 2
+    for fence in fences:
+        pygame.draw.line(screen, "black", (fence[0], fence[1]), (fence[2], fence[3]), 5)
 
     # goose
-    #pygame.draw.circle(screen, "red", pos, 40)
-    #random.randint(0, 15)
+    pygame.draw.circle(screen, "red", pos, 40)
+    random.randint(0, 15)
 
     # update display
     pygame.display.flip()
