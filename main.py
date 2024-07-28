@@ -118,7 +118,7 @@ class Goose(pygame.sprite.Sprite):
             gooseDirec = random.randint(0, 3)
             
             if gooseDirec == 0:  # up
-                newY = self.rect.y - gooseMove
+                newY = self.rect.y - gooseMove #goose = Goose(goosePos.x-65,goosePos.y-50)
                 if newY > 0:  # check if new Y position is within bounds
                     self.rect.y = newY            
             elif gooseDirec == 1:  # down
@@ -136,8 +136,6 @@ class Goose(pygame.sprite.Sprite):
                     self.rect.x = newX
                     self.direction = 1
 
-        self.rect.x = newX
-        self.rect.y = newY
         # animating the geese
         fly_cooldown = 10
         self.counter += 1 
