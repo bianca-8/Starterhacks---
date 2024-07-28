@@ -11,6 +11,11 @@ HEIGHT = 780
 stick1 = 0 # amount of sticks player 1 has
 stick2 = 0 # amount of sticks player 2 has
 fences = [] # list of fence positions
+charStep = 400  # character steps
+charTime = 3 # character speed
+
+# images
+bg = pygame.image.load("bg.png")
 charStep = 300  # character steps
 
 # initialize Pygame
@@ -85,18 +90,17 @@ class Goose(pygame.sprite.Sprite):
        self.images_right = []
        self.images_left = []
        self.index = 0
-# <<<<<<< HEAD
+
        self.counter = 20
        for i in range(1, 5): #adds the images to a list with a loop for the animation
            img_right = pygame.image.load(f'realSprite/Goose{i}.png')
            img_right = pygame.transform.scale(img_right, (120, 80))
            img_left = pygame.transform.flip(img_right, True, False)
-# =======
+
        self.counter = 0
        for i in range(1, 5): #adds the images to a list with a loop for the animation
            img_right = pygame.image.load(f'realSprite/Goose{i}.png')
            img_right = pygame.transform.scale(img_right, (120, 80))
-# >>>>>>> f0aea89d1222a0a6e92be68e6859844a9708e82c
            self.images_right.append(img_right)
            self.images_left.append(img_left)
            
@@ -274,10 +278,13 @@ while running:
     # fill the screen with a color
     screen.fill("white")
 
+    screen.blit(bg, (0, 0))
+
+    """
     # draw background grid - DELETE AFTER
     for i in range(0, WIDTH, GRID):
         for j in range(0, HEIGHT, GRID):
-            pygame.draw.rect(screen, "black", (i, j, GRID, GRID), 5)
+            pygame.draw.rect(screen, "black", (i, j, GRID, GRID), 5)"""
 
     # draw sticks
     pygame.draw.line(screen, "black", (randx * GRID, randy * GRID), (randx * GRID + GRID, randy * GRID + GRID), 5)
@@ -287,6 +294,27 @@ while running:
 
     # character movement
     keys = pygame.key.get_pressed()
+    if keys[pygame.K_w]:
+        newCY = pos.y - GRID
+        if newCY > 0:  # check if new Y position is within bounds
+            pos.y = newCY
+        clock.tick(charTime)
+    elif keys[pygame.K_s]:
+        newCY = pos.y + GRID
+        if newCY < HEIGHT:  # check if new Y position is within bounds
+            pos.y = newCY
+        clock.tick(charTime)
+    elif keys[pygame.K_a]:
+        newCX = pos.x - GRID
+        if newCX > 0:  # check if new X position is within bounds
+            pos.x = newCX
+        clock.tick(charTime)
+    elif keys[pygame.K_d]:
+        newCX = pos.x + GRID
+        if newCX < WIDTH:  # check if new X position is within bounds
+            pos.x = newCX
+        clock.tick(charTime)
+
     if keys[pygame.K_w] and pos.y - charStep * dt > 0:
         pos.y -= charStep * dt
         direction = "up"
@@ -300,14 +328,26 @@ while running:
         pos.x += charStep * dt
         direction = "right"
 
-    if keys[pygame.K_UP] and pos2.y - charStep * dt > 0:
-        pos2.y -= charStep * dt
-    elif keys[pygame.K_DOWN] and pos2.y + charStep * dt < HEIGHT:
-        pos2.y += charStep * dt
-    elif keys[pygame.K_LEFT] and pos2.x - charStep * dt > 0:
-        pos2.x -= charStep * dt
-    elif keys[pygame.K_RIGHT] and pos2.x + charStep * dt < WIDTH:
-        pos2.x += charStep * dt
+    if keys[pygame.K_UP]:
+        newCY = pos2.y - GRID
+        if newCY > 0:  # check if new Y position is within bounds
+            pos2.y = newCY
+        clock.tick(charTime)
+    elif keys[pygame.K_DOWN]:
+        newCY = pos2.y + GRID
+        if newCY < HEIGHT:  # check if new Y position is within bounds
+            pos2.y = newCY
+        clock.tick(charTime)
+    elif keys[pygame.K_LEFT]:
+        newCX = pos2.x - GRID
+        if newCX > 0:  # check if new X position is within bounds
+            pos2.x = newCX
+        clock.tick(charTime)
+    elif keys[pygame.K_RIGHT]:
+        newCX = pos2.x + GRID
+        if newCX < WIDTH:  # check if new X position is within bounds
+            pos2.x = newCX
+        clock.tick(charTime)
 
     # check character collisions with sticks
     for i in range(4):
