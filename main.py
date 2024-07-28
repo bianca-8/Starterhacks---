@@ -155,11 +155,84 @@ class Goose(pygame.sprite.Sprite):
                 self.images = self.images_left[self.index]
         screen.blit(self.images, self.rect)
 
+<<<<<<< HEAD
+
+#pink man image
+class pinkMan(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.x = x
+        self.y = y
+        self.pink_d = []
+        self.pink_u = []
+        self.pink_r = []
+        self.pink_l = []
+        self.index = 0
+        self.counter = 0
+        for i in range(1, 17):
+            if i/4 <= 1:
+                pink_down = pygame.image.load(f'realSprite/pink{i}.png')
+                # img_right = pygame.transform.scale(img_right, (100, 60))
+                self.pink_d.append(pink_down)
+            elif i/4 <= 2:
+                pink_up = pygame.image.load(f'realSprite/pink{i}.png')
+            # img_right = pygame.transform.scale(img_right, (100, 60))
+                self.pink_u.append(pink_up)
+                
+            elif i/4 <= 3:
+                pink_right = pygame.image.load(f'realSprite/pink{i}.png')
+            # img_right = pygame.transform.scale(img_right, (100, 60))
+                self.pink_r.append(pink_right)
+            else:
+                pink_left = pygame.image.load(f'realSprite/pink{i}.png')
+            # img_right = pygame.transform.scale(img_right, (100, 60))
+                self.pink_l.append(pink_left)
+           
+        self.imagesUp = self.pink_u[self.index]
+        self.rectUp = self.imagesUp.get_rect()
+
+        self.rectUp.x = x
+        self.rectUp.y = y
+        self.rectUp.topleft = (x, y)
+        self.mask = pygame.mask.from_surface(self.imagesUp)
+
+    def update_x(self, new_value):
+        self.x = new_value
+        self.rectUp.x = new_value
+
+    def update_y(self, new_value):
+        self.y = new_value
+        self.rectUp.y = new_value
+
+    def update(self, direction):
+        global keys
+        
+            
+        screen.blit(self.imagesUp, self.rectUp)
+        animationUpdate = 20
+        self.counter += 1 
+        if self.counter > animationUpdate:
+            self.counter = 0
+            self.index += 1
+            print("len",len(self.pink_u),self.index)
+            if self.index >= len(self.pink_u):
+                self.index = 0
+            self.imagesUp = self.pink_u[self.index]
+        screen.blit(self.imagesUp, self.rectUp)
+
+
+=======
+>>>>>>> e5012ec334300d0bc1dfc52ce1b6bd72649d05f3
 
 # initialize time for goose movement
 gooseLastMoveTime = pygame.time.get_ticks()
 moveInterval = 1000  # milliseconds (1.5 seconds)
 goose = Goose(goosePos.x-65,goosePos.y-50)
+<<<<<<< HEAD
+pink = pinkMan(50,50)
+direction = "down"
+=======
+>>>>>>> e5012ec334300d0bc1dfc52ce1b6bd72649d05f3
 
 # main loop
 while running:
