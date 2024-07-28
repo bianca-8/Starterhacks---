@@ -82,7 +82,7 @@ class Goose(pygame.sprite.Sprite):
        self.counter = 0
        for i in range(1, 4): #adds the images to a list with a loop for the animation
            img_right = pygame.image.load(f'realSprite/Goose{i}.png')
-           img_right = pygame.transform.scale(img_right, (100, 60))
+           img_right = pygame.transform.scale(img_right, (120, 80))
            self.images_right.append(img_right)
            
        self.images = self.images_right[self.index]
@@ -191,7 +191,7 @@ while running:
 
     # draw goose
     pygame.draw.circle(screen, "green", goosePos, 40)
-    goose = Goose(goosePos.x,goosePos.y)
+    goose = Goose(goosePos.x-70,goosePos.y-50)
     goose.update()
 
     # update display
