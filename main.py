@@ -145,7 +145,6 @@ class pinkMan(pygame.sprite.Sprite):
         self.pink_l = []
         self.index = 0
         self.counter = 0
-        self.direction = "down"
         for i in range(1, 17):
             if i/4 <= 1:
                 pink_down = pygame.image.load(f'realSprite/pink{i}.png')
@@ -180,12 +179,13 @@ class pinkMan(pygame.sprite.Sprite):
         screen.blit(self.imagesUp, self.rectUp)
         animationUpdate = 20
         self.counter += 1 
-        if self.counter> animationUpdate:
+        if self.counter > animationUpdate:
             self.counter = 0
             self.index += 1
+            print("len",len(self.pink_u),self.index)
             if self.index >= len(self.pink_u):
                 self.index = 0
-            self.images = self.pink_u[self.index]
+            self.imagesUp = self.pink_u[self.index]
         screen.blit(self.imagesUp, self.rectUp)
 
 
