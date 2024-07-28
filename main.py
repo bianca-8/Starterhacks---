@@ -19,18 +19,13 @@ font = pygame.font.SysFont("Times New Roman", 25)
 
 # variables
 stick = 0 # amount of sticks player 1 has
+poop = 0 # amount of poop player 1 has
 fences = [] # list of fence positions
 charTime = 3 # character speed
 lastDirect = "w" # last direction character was facing (w is up, s is down, a is left, d is right)
 
 # images
 bg = pygame.image.load("bg.png")
-# load fence image
-img_fence =pygame.image.load('realSprite/fencePost.png')
-img_fence = pygame.transform.scale(img_fence, (70, 100))
-# load stick image
-img_stick =pygame.image.load('realSprite/Stick.png')
-img_stick = pygame.transform.scale(img_stick, (70, 100))
 
 # initialize positions
 pos = pygame.Vector2(WIDTH / 2 - 40, HEIGHT / 2 + 50)
@@ -53,6 +48,83 @@ randy2 = random.randint(0, HEIGHT // GRID - 1)
 randx3 = random.randint(0, WIDTH // GRID - 1)
 randy3 = random.randint(0, HEIGHT // GRID - 1)
 
+# random poop positions
+randpx = 0
+randpy = 0
+
+randpx1 = 0
+randpy1 = 0
+
+randpx2 = 0
+randpy2 = 0
+
+randpx3 = 0
+randpy3 = 0
+
+def updatePoopPos(num):
+    global randpx, randpy, randpx1, randpy1, randpx2, randpy2, randpx3, randpy3
+    if num == 0:
+        randpx = random.randint(0, WIDTH // GRID - 1)
+        randpy = random.randint(0, HEIGHT // GRID - 1)
+
+        if randpx * GRID - GRID // 2 > 0:
+            randpx = randpx * GRID - GRID // 2
+        else:
+            randpx = randpx * GRID + GRID // 2
+
+        if randpy * GRID - GRID // 2 > 0:
+            randpy = randpy * GRID - GRID // 2
+        else:
+            randpy = randpy * GRID + GRID // 2
+
+    elif num == 1:
+        randpx1 = random.randint(0, WIDTH // GRID - 1)
+        randpy1 = random.randint(0, HEIGHT // GRID - 1)
+
+        if randpx1 * GRID - GRID // 2 > 0:
+            randpx1 = randpx1 * GRID - GRID // 2
+        else:
+            randpx1 = randpx1 * GRID + GRID // 2
+
+        if randpy1 * GRID - GRID // 2 > 0:
+            randpy1 = randpy1 * GRID - GRID // 2
+        else:
+            randpy1 = randpy1 * GRID + GRID // 2
+
+    elif num == 2:
+        randpx2 = random.randint(0, WIDTH // GRID - 1)
+        randpy2 = random.randint(0, HEIGHT // GRID - 1)
+
+        if randpx2 * GRID - GRID // 2 > 0:
+            randpx2 = randpx2 * GRID - GRID // 2
+        else:
+            randpx2 = randpx2 * GRID + GRID // 2
+
+        if randpy2 * GRID - GRID // 2 > 0:
+            randpy2 = randpy2 * GRID - GRID // 2
+        else:
+            randpy2 = randpy2 * GRID + GRID // 2
+
+    elif num == 3:
+        randpx3 = random.randint(0, WIDTH // GRID - 1)
+        randpy3 = random.randint(0, HEIGHT // GRID - 1)
+
+        if randpx3 * GRID - GRID // 2 > 0:
+            randpx3 = randpx3 * GRID - GRID // 2
+        else:
+            randpx3 = randpx3 * GRID + GRID // 2
+
+        if randpy3 * GRID - GRID // 2 > 0:
+            randpy3 = randpy3 * GRID - GRID // 2
+        else:
+            randpy3 = randpy3 * GRID + GRID // 2
+
+# random poop positions
+updatePoopPos(0)
+updatePoopPos(1)
+updatePoopPos(2)
+updatePoopPos(3)
+
 # character collision with sticks
 def collideStick(posx, posy, stick, amount):
     global randx, randy, randx1, randy1, randx2, randy2, randx3, randy3
@@ -72,14 +144,35 @@ def collideStick(posx, posy, stick, amount):
 
     return amount
 
+# character collision with poop
+def collidePoop(posx, posy, poop, amount):
+    global randpx, randpy, randpx1, randpy1, randpx2, randpy2, randpx3, randpy3
+
+    def check_collision(px, py):
+        return (posx > px - GRID // 2 and posx < px + GRID // 2) and (posy > py - GRID // 2 and posy < py + GRID // 2)
+
+    if poop == 0 and check_collision(randpx, randpy):
+        updatePoopPos(0)
+        amount += 1
+    elif poop == 1 and check_collision(randpx1, randpy1):
+        updatePoopPos(1)
+        amount += 1
+    elif poop == 2 and check_collision(randpx2, randpy2):
+        updatePoopPos(2)
+        amount += 1
+    elif poop == 3 and check_collision(randpx3, randpy3):
+        updatePoopPos(3)
+        amount += 1
+
+    return amount
+
 # check if new fence overlaps with any existing fences
 def checkFenceOverlap(new_fence):
     for fence in fences:
         if (fence[0] == new_fence[0] and fence[1] == new_fence[1] and fence[2] == new_fence[2] and fence[3] == new_fence[3]):
             return True
     return False
-
-
+        
 #create goose sprite
 class Goose(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -234,6 +327,10 @@ goose = Goose(goosePos.x-65,goosePos.y-50)
 pink = pinkMan(50,50)
 direction = "down"
 
+# initialize time for poop movement
+poopLastMoveTime = pygame.time.get_ticks()
+poopMoveInterval = 10000  # milliseconds (10 seconds)
+
 # main loop
 while running:
     for event in pygame.event.get():
@@ -246,24 +343,37 @@ while running:
     # draw background
     screen.blit(bg, (0, 0))
 
-    # stick text
-    text = font.render(f"Sticks: {stick}", True, "black")
-    textRect = text.get_rect()
-    textRect.center = (WIDTH // 2, 30) # center text
-    pygame.draw.rect(screen, "white", textRect) # stick text border
-    screen.blit(text, textRect) # stick text
-
-    """
     # background grid - DELETE AFTER
     for i in range(0, WIDTH, GRID):
         for j in range(0, HEIGHT, GRID):
-            pygame.draw.rect(screen, "black", (i, j, GRID, GRID), 5)"""
+            pygame.draw.rect(screen, "black", (i, j, GRID, GRID), 5)
+
+    # stick text
+    text = font.render(f"Sticks: {stick}", True, "black")
+    textRect = text.get_rect()
+    textRect.center = (WIDTH // 2 + 120, 30) # center text
+    pygame.draw.rect(screen, "white", textRect) # stick text border
+    screen.blit(text, textRect) # stick text
+
+    # point text
+    text2 = font.render(f"Points: {poop}", True, "black")
+    textRect2 = text2.get_rect()
+    textRect2.center = (WIDTH // 2 - 120, 30) # center text
+    pygame.draw.rect(screen, "white", textRect2) # points text border
+    screen.blit(text2, textRect2) # points text
 
     # draw sticks
     pygame.draw.line(screen, "black", (randx * GRID, randy * GRID), (randx * GRID + GRID, randy * GRID + GRID), 5)
     pygame.draw.line(screen, "black", (randx1 * GRID, randy1 * GRID), (randx1 * GRID + GRID, randy1 * GRID + GRID), 5)
     pygame.draw.line(screen, "black", (randx2 * GRID, randy2 * GRID), (randx2 * GRID + GRID, randy2 * GRID + GRID), 5)
     pygame.draw.line(screen, "black", (randx3 * GRID, randy3 * GRID), (randx3 * GRID + GRID, randy3 * GRID + GRID), 5)
+
+    # draw poop
+    pygame.draw.circle(screen, "brown", (randpx, randpy), 20)
+    pygame.draw.circle(screen, "brown", (randpx1, randpy1), 20)
+    pygame.draw.circle(screen, "brown", (randpx2, randpy2), 20)
+    pygame.draw.circle(screen, "brown", (randpx3, randpy3), 20)
+    #print(randpx, randpy, randpx1, randpy1, randpx2, randpy2, randpx3, randpy3)
 
     # character movement
     keys = pygame.key.get_pressed()
@@ -393,8 +503,14 @@ while running:
     for i in range(4):
         stick = collideStick(pos.x, pos.y, i, stick)
 
+    # check character collisions with poop
+    for i in range(4):
+        poop = collidePoop(pos.x, pos.y, i, poop)
+
+    # draw characters
+    pygame.draw.circle(screen, "red", pos, 40)
+
     # draw fences
-    #print(stick) BRING BACK
     if keys[pygame.K_SPACE] and stick > 0:
         if (lastDirect == "w"):
             fencePos = pygame.Vector2(pos.x, pos.y - GRID - GRID // 2)
@@ -412,14 +528,14 @@ while running:
         clock.tick(3) 
     
     for fence in fences:
-        screen.blit(img_fence, (fence[0]-40, fence[1]-15))
+        pygame.draw.line(screen, "pink", (fence[0], fence[1]), (fence[2], fence[3]), 5)
 
     # draw goose
     goose.update()
 
     #PinkMan
-    pink.update_x(pos.x-5)
-    pink.update_y(pos.y-35)
+    pink.update_x(pos.x)
+    pink.update_y(pos.y)
     pink.update(direction)
 
     # update display
