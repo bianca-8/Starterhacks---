@@ -11,11 +11,6 @@ HEIGHT = 780
 stick1 = 0 # amount of sticks player 1 has
 stick2 = 0 # amount of sticks player 2 has
 fences = [] # list of fence positions
-charStep = 400  # character steps
-charTime = 3 # character speed
-
-# images
-bg = pygame.image.load("bg.png")
 charStep = 300  # character steps
 
 # initialize Pygame
@@ -90,11 +85,15 @@ class Goose(pygame.sprite.Sprite):
        self.images_right = []
        self.images_left = []
        self.index = 0
-       self.counter = 0
+       self.counter = 20
        for i in range(1, 5): #adds the images to a list with a loop for the animation
            img_right = pygame.image.load(f'realSprite/Goose{i}.png')
            img_right = pygame.transform.scale(img_right, (120, 80))
            img_left = pygame.transform.flip(img_right, True, False)
+       self.counter = 0
+       for i in range(1, 5): #adds the images to a list with a loop for the animation
+           img_right = pygame.image.load(f'realSprite/Goose{i}.png')
+           img_right = pygame.transform.scale(img_right, (120, 80))
            self.images_right.append(img_right)
            self.images_left.append(img_left)
            
@@ -102,7 +101,7 @@ class Goose(pygame.sprite.Sprite):
        self.rect = self.images.get_rect()
        self.rect.x = x
        self.rect.y = y
-       self.direction = 1
+       self.direction = 0
        self.rect.topleft = (x, y)
        self.mask = pygame.mask.from_surface(self.images)
 
@@ -118,7 +117,7 @@ class Goose(pygame.sprite.Sprite):
             gooseDirec = random.randint(0, 3)
             
             if gooseDirec == 0:  # up
-                newY = self.rect.y - gooseMove #goose = Goose(goosePos.x-65,goosePos.y-50)
+                newY = self.rect.y - gooseMove
                 if newY > 0:  # check if new Y position is within bounds
                     self.rect.y = newY            
             elif gooseDirec == 1:  # down
@@ -136,8 +135,11 @@ class Goose(pygame.sprite.Sprite):
                     self.rect.x = newX
                     self.direction = 1
 
+        self.rect.x = newX
+        self.rect.y = newY
         # animating the geese
-        fly_cooldown = 10
+        fly_cooldown = 20
+        print(self.counter)
         self.counter += 1 
         if self.counter> fly_cooldown:
             self.counter = 0
@@ -155,13 +157,12 @@ class Goose(pygame.sprite.Sprite):
 class pinkMan(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.x = x-25
-        self.y = y-25
+        self.x = x
+        self.y = y
         self.pink_d = []
         self.pink_u = []
         self.pink_r = []
         self.pink_l = []
-        self.pink = self.pink_u
         self.index = 0
         self.counter = 0
         for i in range(1, 17):
@@ -183,6 +184,7 @@ class pinkMan(pygame.sprite.Sprite):
             # img_right = pygame.transform.scale(img_right, (100, 60))
                 self.pink_l.append(pink_left)
            
+<<<<<<< HEAD
         self.images = self.pink_d[self.index]
         self.rect = self.images.get_rect()
 
@@ -192,18 +194,28 @@ class pinkMan(pygame.sprite.Sprite):
         self.rect.topleft = (x-25, y-25)
         self.mask = pygame.mask.from_surface(self.images)
         self.prevDirection = -1
+=======
+        self.imagesUp = self.pink_u[self.index]
+        self.rectUp = self.imagesUp.get_rect()
+
+        self.rectUp.x = x
+        self.rectUp.y = y
+        self.rectUp.topleft = (x, y)
+        self.mask = pygame.mask.from_surface(self.imagesUp)
+>>>>>>> b1321a89d83ff7b79878cb5b4615e4d134d3db50
 
     def update_x(self, new_value):
-        self.x = new_value-25
-        self.rect.x = new_value-25
+        self.x = new_value
+        self.rectUp.x = new_value
 
     def update_y(self, new_value):
-        self.y = new_value-25
-        self.rect.y = new_value-25
+        self.y = new_value
+        self.rectUp.y = new_value
 
     def update(self, direction):
         global keys
         
+<<<<<<< HEAD
         if direction == "up":
             self.direction = 1
         elif direction == "down":
@@ -213,11 +225,16 @@ class pinkMan(pygame.sprite.Sprite):
         elif direction == "right": #right
             self.direction = 4
         
+=======
+            
+        screen.blit(self.imagesUp, self.rectUp)
+>>>>>>> b1321a89d83ff7b79878cb5b4615e4d134d3db50
         animationUpdate = 20
         self.counter += 1 
         if self.counter > animationUpdate or direction != self.prevDirection:
             self.counter = 0
             self.index += 1
+<<<<<<< HEAD
             # print("len",len(self.pink_u),self.index)
             if self.index >= len(self.pink_d):
                 self.index = 0
@@ -231,6 +248,13 @@ class pinkMan(pygame.sprite.Sprite):
                 self.images = self.pink_r[self.index]
         self.prevDirection = direction
         screen.blit(self.images, self.rect)
+=======
+            print("len",len(self.pink_u),self.index)
+            if self.index >= len(self.pink_u):
+                self.index = 0
+            self.imagesUp = self.pink_u[self.index]
+        screen.blit(self.imagesUp, self.rectUp)
+>>>>>>> b1321a89d83ff7b79878cb5b4615e4d134d3db50
 
 
 
@@ -250,13 +274,10 @@ while running:
     # fill the screen with a color
     screen.fill("white")
 
-    screen.blit(bg, (0, 0))
-
-    """
     # draw background grid - DELETE AFTER
     for i in range(0, WIDTH, GRID):
         for j in range(0, HEIGHT, GRID):
-            pygame.draw.rect(screen, "black", (i, j, GRID, GRID), 5)"""
+            pygame.draw.rect(screen, "black", (i, j, GRID, GRID), 5)
 
     # draw sticks
     pygame.draw.line(screen, "black", (randx * GRID, randy * GRID), (randx * GRID + GRID, randy * GRID + GRID), 5)
@@ -266,27 +287,6 @@ while running:
 
     # character movement
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        newCY = pos.y - GRID
-        if newCY > 0:  # check if new Y position is within bounds
-            pos.y = newCY
-        clock.tick(charTime)
-    elif keys[pygame.K_s]:
-        newCY = pos.y + GRID
-        if newCY < HEIGHT:  # check if new Y position is within bounds
-            pos.y = newCY
-        clock.tick(charTime)
-    elif keys[pygame.K_a]:
-        newCX = pos.x - GRID
-        if newCX > 0:  # check if new X position is within bounds
-            pos.x = newCX
-        clock.tick(charTime)
-    elif keys[pygame.K_d]:
-        newCX = pos.x + GRID
-        if newCX < WIDTH:  # check if new X position is within bounds
-            pos.x = newCX
-        clock.tick(charTime)
-
     if keys[pygame.K_w] and pos.y - charStep * dt > 0:
         pos.y -= charStep * dt
         direction = "up"
@@ -300,26 +300,14 @@ while running:
         pos.x += charStep * dt
         direction = "right"
 
-    if keys[pygame.K_UP]:
-        newCY = pos2.y - GRID
-        if newCY > 0:  # check if new Y position is within bounds
-            pos2.y = newCY
-        clock.tick(charTime)
-    elif keys[pygame.K_DOWN]:
-        newCY = pos2.y + GRID
-        if newCY < HEIGHT:  # check if new Y position is within bounds
-            pos2.y = newCY
-        clock.tick(charTime)
-    elif keys[pygame.K_LEFT]:
-        newCX = pos2.x - GRID
-        if newCX > 0:  # check if new X position is within bounds
-            pos2.x = newCX
-        clock.tick(charTime)
-    elif keys[pygame.K_RIGHT]:
-        newCX = pos2.x + GRID
-        if newCX < WIDTH:  # check if new X position is within bounds
-            pos2.x = newCX
-        clock.tick(charTime)
+    if keys[pygame.K_UP] and pos2.y - charStep * dt > 0:
+        pos2.y -= charStep * dt
+    elif keys[pygame.K_DOWN] and pos2.y + charStep * dt < HEIGHT:
+        pos2.y += charStep * dt
+    elif keys[pygame.K_LEFT] and pos2.x - charStep * dt > 0:
+        pos2.x -= charStep * dt
+    elif keys[pygame.K_RIGHT] and pos2.x + charStep * dt < WIDTH:
+        pos2.x += charStep * dt
 
     # check character collisions with sticks
     for i in range(4):
