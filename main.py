@@ -183,25 +183,15 @@ class pinkMan(pygame.sprite.Sprite):
             # img_right = pygame.transform.scale(img_right, (100, 60))
                 self.pink_l.append(pink_left)
            
-        self.imagesUp = self.pink_u[self.index]
-        self.rectUp = self.imagesUp.get_rect()
-
-        self.imagesDown = self.pink_d[self.index]
-        self.rectDown = self.imagesDown.get_rect()
-
-        self.imagesRight = self.pink_r[self.index]
-        self.rectRight = self.imagesRight.get_rect()
-
-        self.imagesLeft = self.pink_l[self.index]
-        self.rectLeft = self.imagesLeft.get_rect()
-
-        self.rect = self.rectUp
-        self.images = self.imagesUp
+        self.images = self.pink_d[self.index]
+        self.rect = self.images.get_rect()
 
         self.rect.x = x-25
         self.rect.y = y-25
+        self.direction = 0
         self.rect.topleft = (x-25, y-25)
         self.mask = pygame.mask.from_surface(self.images)
+        self.prevDirection = -1
 
     def update_x(self, new_value):
         self.x = new_value-25
@@ -215,40 +205,31 @@ class pinkMan(pygame.sprite.Sprite):
         global keys
         
         if direction == "up":
-            if self.images != self.imagesUp and self.rect != self.rectUp and pink != self.pink_u:
-                self.images = self.imagesUp
-                self.rect = self.rectUp
-                self.pink = self.pink_u
-                self.index = 0
+            self.direction = 1
         elif direction == "down":
-            if self.images != self.imagesDown and self.rect != self.rectDown and pink != self.pink_d:
-                self.images = self.imagesDown
-                self.rect = self.rectDown
-                self.pink = self.pink_d
-                self.index = 0
+            self.direction = 2
         elif direction == "left":
-            if self.images != self.imagesLeft and self.rect != self.rectLeft and pink != self.pink_l:
-                self.images = self.imagesLeft
-                self.rect = self.rectLeft
-                self.pink = self.pink_l
-                self.index = 0
+            self.direction = 3
         elif direction == "right": #right
-            if self.images != self.imagesRight and self.rect != self.rectRight and pink != self.pink_r:
-                self.images = self.imagesRight
-                self.rect = self.rectRight
-                self.pink = self.pink_r
-                self.index = 0
-            
-        screen.blit(self.images, self.rect)
+            self.direction = 4
+        
         animationUpdate = 20
         self.counter += 1 
-        if self.counter > animationUpdate:
+        if self.counter > animationUpdate or direction != self.prevDirection:
             self.counter = 0
             self.index += 1
             # print("len",len(self.pink_u),self.index)
-            if self.index >= len(self.pink):
+            if self.index >= len(self.pink_d):
                 self.index = 0
-            self.images = self.pink[self.index]
+            if self.direction == 1:
+                self.images = self.pink_u[self.index]
+            if self.direction == 2:
+                self.images = self.pink_d[self.index]
+            if self.direction == 3:
+                self.images = self.pink_l[self.index]
+            if self.direction == 4:
+                self.images = self.pink_r[self.index]
+        self.prevDirection = direction
         screen.blit(self.images, self.rect)
 
 
