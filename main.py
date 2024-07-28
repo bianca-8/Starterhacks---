@@ -28,6 +28,7 @@ lastDirect = "w" # last direction character was facing (w is up, s is down, a is
 
 # images
 bg = pygame.image.load("bg.png")
+bg = pygame.transform.scale(bg, (1280, 780))
 # load fence image
 img_fence =pygame.image.load('realSprite/fencePost.png')
 img_fence = pygame.transform.scale(img_fence, (70, 100))
