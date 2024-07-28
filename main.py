@@ -110,30 +110,19 @@ class Goose(pygame.sprite.Sprite):
 
     def update(self):
         global gooseLastMoveTime 
-# <<<<<<< HEAD
         newX = self.rect.x
         newY = self.rect.y
-# =======
-        global newX
-        global newY
-# >>>>>>> f0aea89d1222a0a6e92be68e6859844a9708e82c
+
         currentTime = pygame.time.get_ticks()
         if currentTime - gooseLastMoveTime > moveInterval:
             gooseLastMoveTime = currentTime
             gooseMove = 80
             gooseDirec = random.randint(0, 3)
             
-# <<<<<<< HEAD
-            if gooseDirec == 0:  # up
-                newY = self.rect.y - gooseMove
-                if newY > 100:  # check if new Y position is within bounds
-# =======
-            
             if gooseDirec == 0:  # up
                 newY = self.rect.y - gooseMove
                 if newY > 0:  # check if new Y position is within bounds
-# >>>>>>> f0aea89d1222a0a6e92be68e6859844a9708e82c
-                    self.rect.y = newY
+                    self.rect.y = newY            
             elif gooseDirec == 1:  # down
                 newY = self.rect.y + gooseMove
                 if newY < HEIGHT:  # check if new Y position is within bounds
@@ -142,19 +131,13 @@ class Goose(pygame.sprite.Sprite):
                 newX = self.rect.x - gooseMove
                 if newX > 0:  # check if new X position is within bounds
                     self.rect.x = newX
-# <<<<<<< HEAD
                     self.direction = -1
-# =======
-# >>>>>>> f0aea89d1222a0a6e92be68e6859844a9708e82c
             elif gooseDirec == 3:  # right
                 newX = self.rect.x + gooseMove
                 if newX < WIDTH:  # check if new X position is within bounds
                     self.rect.x = newX
-# <<<<<<< HEAD
                     self.direction = 1
-# =======
-# >>>>>>> f0aea89d1222a0a6e92be68e6859844a9708e82c
-        #Updating coordinates of goose
+
         self.rect.x = newX
         self.rect.y = newY
         # animating the geese
@@ -171,6 +154,7 @@ class Goose(pygame.sprite.Sprite):
             if self.direction == -1:
                 self.images = self.images_left[self.index]
         screen.blit(self.images, self.rect)
+
 
 #pink man image
 class pinkMan(pygame.sprite.Sprite):
@@ -240,7 +224,7 @@ class pinkMan(pygame.sprite.Sprite):
 # initialize time for goose movement
 gooseLastMoveTime = pygame.time.get_ticks()
 moveInterval = 1000  # milliseconds (1.5 seconds)
-goose = Goose(goosePos.x-80,goosePos.y-50)
+goose = Goose(goosePos.x-65,goosePos.y-50)
 pink = pinkMan(50,50)
 direction = "down"
 
