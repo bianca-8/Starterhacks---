@@ -29,6 +29,8 @@ goosePos = pygame.Vector2(gooseRandx * GRID + GRID // 2, gooseRandy * GRID + GRI
 newX = 0
 newY = 0
 
+    
+
 # random stick positions
 randx = random.randint(0, WIDTH // GRID - 1)
 randy = random.randint(0, HEIGHT // GRID - 1)
@@ -66,7 +68,8 @@ def collideStick(posx, posy, stick, amount):
         amount += 1 # + 1 to sticks that the player has
 
     return amount
-    
+
+
 #create character sprite
 class CharacterMale(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -80,34 +83,56 @@ class CharacterMale(pygame.sprite.Sprite):
 class Goose(pygame.sprite.Sprite):
     def __init__(self, x, y):
        self.images_right = []
+       self.images_left = []
        self.index = 0
+# <<<<<<< HEAD
+       self.counter = 20
+       for i in range(1, 5): #adds the images to a list with a loop for the animation
+           img_right = pygame.image.load(f'realSprite/Goose{i}.png')
+           img_right = pygame.transform.scale(img_right, (120, 80))
+           img_left = pygame.transform.flip(img_right, True, False)
+# =======
        self.counter = 0
        for i in range(1, 5): #adds the images to a list with a loop for the animation
            img_right = pygame.image.load(f'realSprite/Goose{i}.png')
            img_right = pygame.transform.scale(img_right, (120, 80))
+# >>>>>>> f0aea89d1222a0a6e92be68e6859844a9708e82c
            self.images_right.append(img_right)
+           self.images_left.append(img_left)
            
        self.images = self.images_right[self.index]
        self.rect = self.images.get_rect()
        self.rect.x = x
        self.rect.y = y
+       self.direction = 0
        self.rect.topleft = (x, y)
        self.mask = pygame.mask.from_surface(self.images)
 
     def update(self):
         global gooseLastMoveTime 
+# <<<<<<< HEAD
+        newX = self.rect.x
+        newY = self.rect.y
+# =======
         global newX
         global newY
+# >>>>>>> f0aea89d1222a0a6e92be68e6859844a9708e82c
         currentTime = pygame.time.get_ticks()
         if currentTime - gooseLastMoveTime > moveInterval:
             gooseLastMoveTime = currentTime
             gooseMove = 80
             gooseDirec = random.randint(0, 3)
             
+# <<<<<<< HEAD
+            if gooseDirec == 0:  # up
+                newY = self.rect.y - gooseMove
+                if newY > 100:  # check if new Y position is within bounds
+# =======
             
             if gooseDirec == 0:  # up
                 newY = self.rect.y - gooseMove
                 if newY > 0:  # check if new Y position is within bounds
+# >>>>>>> f0aea89d1222a0a6e92be68e6859844a9708e82c
                     self.rect.y = newY
             elif gooseDirec == 1:  # down
                 newY = self.rect.y + gooseMove
@@ -117,10 +142,18 @@ class Goose(pygame.sprite.Sprite):
                 newX = self.rect.x - gooseMove
                 if newX > 0:  # check if new X position is within bounds
                     self.rect.x = newX
+# <<<<<<< HEAD
+                    self.direction = -1
+# =======
+# >>>>>>> f0aea89d1222a0a6e92be68e6859844a9708e82c
             elif gooseDirec == 3:  # right
                 newX = self.rect.x + gooseMove
                 if newX < WIDTH:  # check if new X position is within bounds
                     self.rect.x = newX
+# <<<<<<< HEAD
+                    self.direction = 1
+# =======
+# >>>>>>> f0aea89d1222a0a6e92be68e6859844a9708e82c
         #Updating coordinates of goose
         self.rect.x = newX
         self.rect.y = newY
@@ -133,7 +166,10 @@ class Goose(pygame.sprite.Sprite):
             self.index += 1
             if self.index >= len(self.images_right):
                 self.index = 0
-            self.images = self.images_right[self.index]
+            if self.direction == 1:
+                self.images = self.images_right[self.index]
+            if self.direction == -1:
+                self.images = self.images_left[self.index]
         screen.blit(self.images, self.rect)
 
 #pink man image
@@ -279,7 +315,6 @@ while running:
         pygame.draw.line(screen, "black", (fence[0], fence[1]), (fence[2], fence[3]), 5)
 
     # draw goose
-
     goose.update()
 
     #PinkMan
