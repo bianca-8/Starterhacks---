@@ -98,7 +98,7 @@ class Goose(pygame.sprite.Sprite):
 # initialize time for goose movement
 gooseLastMoveTime = pygame.time.get_ticks()
 moveInterval = 1000  # milliseconds (1.5 seconds)
-goose = Goose(100,100)
+
 # main loop
 while running:
     for event in pygame.event.get():
@@ -191,6 +191,7 @@ while running:
 
     # draw goose
     pygame.draw.circle(screen, "green", goosePos, 40)
+    goose = Goose(100,100)
     goose.update()
 
     # update display
