@@ -1,2 +1,4 @@
 # This is a README. 
-# Bianca's brother (Eddie), plz don't look at it. 
+# This game supports arrow keys and "awsd"
+# Use spacee to put down the log
+
