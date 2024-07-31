@@ -1,4 +1,3 @@
-# This is a README. 
-# This game supports arrow keys and "awsd"
-# Use spacee to put down the log
-
+# This game supports arrow keys and "wasd"
+# Use spacee to put down logs
+# Avoid the goose and pick up as many dots as you can
